@@ -80,8 +80,12 @@
 
             <div class="form-grid">
                 <div class="form-group">
+                    <label>👤 Apellido del Candidato</label>
+                    <input type="text" id="candidateLastName" placeholder="Ej: Pérez García">
+                </div>
+                <div class="form-group">
                     <label>👤 Nombre del Candidato</label>
-                    <input type="text" id="candidateName" placeholder="Ej: Juan Pérez">
+                    <input type="text" id="candidateFirstName" placeholder="Ej: Juan">
                 </div>
                 <div class="form-group">
                     <label>🆔 Cédula de Ciudadanía</label>
@@ -140,6 +144,10 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                         <label>Fecha de Fin *</label>
                         <input type="date" id="endDate">
                     </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Comentarios (Opcional)</label>
+                        <textarea id="comments" placeholder="Notas adicionales sobre este contrato..." style="min-height: 80px;"></textarea>
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="addContract()">➕ Agregar Contrato</button>
             </div>
@@ -162,7 +170,8 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script>
         let currentCandidate = {
-            name: '',
+            firstName: '',
+            lastName: '',
             cedula: '',
             contracts: []
         };
@@ -241,7 +250,8 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                             company: company,
                             position: position,
                             startDate: startDate,
-                            endDate: endDate
+                            endDate: endDate,
+                            comments: ''
                         });
                         processed++;
                     } else {
@@ -310,6 +320,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const position = document.getElementById('position').value.trim();
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
+            const comments = document.getElementById('comments').value.trim();
 
             if (!company || !position || !startDate || !endDate) {
                 alert('Por favor completa todos los campos obligatorios del contrato');
@@ -327,7 +338,8 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                 company: company,
                 position: position,
                 startDate: startDate,
-                endDate: endDate
+                endDate: endDate,
+                comments: comments
             };
 
             currentCandidate.contracts.push(contract);
@@ -337,6 +349,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             document.getElementById('position').value = '';
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
+            document.getElementById('comments').value = '';
 
             renderContractsTable();
             checkOverlaps();
@@ -388,14 +401,15 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             let html = '<hr class="divider"><h3>📝 Contratos Registrados (' + currentCandidate.contracts.length + ')</h3>';
             html += '<p class="helper-text">💡 Puedes editar directamente en la tabla, duplicar contratos para dividirlos, o eliminarlos</p>';
             html += '<table class="contract-table"><thead><tr>';
-            html += '<th style="width: 4%">#</th>';
-            html += '<th style="width: 12%">Ciudad</th>';
-            html += '<th style="width: 22%">Empresa</th>';
-            html += '<th style="width: 18%">Cargo</th>';
-            html += '<th style="width: 12%">Fecha Inicio</th>';
-            html += '<th style="width: 12%">Fecha Fin</th>';
-            html += '<th style="width: 10%">Duración</th>';
-            html += '<th style="width: 10%">Acciones</th>';
+            html += '<th style="width: 3%">#</th>';
+            html += '<th style="width: 10%">Ciudad</th>';
+            html += '<th style="width: 18%">Empresa</th>';
+            html += '<th style="width: 15%">Cargo</th>';
+            html += '<th style="width: 10%">Fecha Inicio</th>';
+            html += '<th style="width: 10%">Fecha Fin</th>';
+            html += '<th style="width: 8%">Duración</th>';
+            html += '<th style="width: 18%">Comentarios</th>';
+            html += '<th style="width: 8%">Acciones</th>';
             html += '</tr></thead><tbody>';
 
             currentCandidate.contracts.forEach((contract, index) => {
@@ -410,6 +424,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                 html += `<td><input type="date" value="${contract.startDate}" onblur="updateContract(${contract.id}, 'startDate', this.value); renderContractsTable()"></td>`;
                 html += `<td><input type="date" value="${contract.endDate}" onblur="updateContract(${contract.id}, 'endDate', this.value); renderContractsTable()"></td>`;
                 html += `<td>${isError ? '❌ Error' : formatExperience(days)}</td>`;
+                html += `<td><textarea onchange="updateContract(${contract.id}, 'comments', this.value)" placeholder="Notas...">${contract.comments || ''}</textarea></td>`;
                 html += `<td><div class="action-buttons">`;
                 html += `<button class="btn btn-warning btn-small" onclick="duplicateContract(${contract.id})" title="Duplicar para dividir">📋</button>`;
                 html += `<button class="btn btn-danger btn-small" onclick="deleteContract(${contract.id})" title="Eliminar">🗑️</button>`;
@@ -538,10 +553,16 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
         }
 
         function saveCandidate() {
-            const name = document.getElementById('candidateName').value.trim();
+            const lastName = document.getElementById('candidateLastName').value.trim();
+            const firstName = document.getElementById('candidateFirstName').value.trim();
             const cedula = document.getElementById('candidateCedula').value.trim();
 
-            if (!name) {
+            if (!lastName) {
+                alert('Por favor ingresa el apellido del candidato');
+                return;
+            }
+
+            if (!firstName) {
                 alert('Por favor ingresa el nombre del candidato');
                 return;
             }
@@ -559,16 +580,19 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const totalDays = calculateTotalExperience(currentCandidate.contracts);
             
             candidates.push({
-                name: name,
+                firstName: firstName,
+                lastName: lastName,
+                fullName: lastName + ' ' + firstName,
                 cedula: cedula,
                 contracts: [...currentCandidate.contracts],
                 totalExperience: totalDays,
                 savedAt: new Date().toLocaleString()
             });
 
-            document.getElementById('candidateName').value = '';
+            document.getElementById('candidateLastName').value = '';
+            document.getElementById('candidateFirstName').value = '';
             document.getElementById('candidateCedula').value = '';
-            currentCandidate = { name: '', cedula: '', contracts: [] };
+            currentCandidate = { firstName: '', lastName: '', cedula: '', contracts: [] };
             
             renderContractsTable();
             checkOverlaps();
@@ -597,7 +621,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                     <div class="candidate-card">
                         <div class="candidate-header">
                             <div class="candidate-info">
-                                <h3>${candidate.name}</h3>
+                                <h3>${candidate.fullName}</h3>
                                 <p>CC: ${candidate.cedula}</p>
                                 <p>Guardado el ${candidate.savedAt}</p>
                             </div>
@@ -608,7 +632,10 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                             <p>✅ Experiencia Total: ${formatExperience(candidate.totalExperience)}</p>
                         </div>
 
-                        <button class="btn btn-success" onclick="exportToExcel(${index})">📥 Descargar Reporte en Excel</button>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                            <button class="btn btn-secondary" style="flex: 1;" onclick="editCandidate(${index})">✏️ Editar Candidato</button>
+                            <button class="btn btn-success" style="flex: 1;" onclick="exportToExcel(${index})">📥 Descargar Excel</button>
+                        </div>
 
                         <details>
                             <summary>Ver ${candidate.contracts.length} contrato(s) registrado(s)</summary>
@@ -617,6 +644,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                                     <div class="contract-list-item">
                                         <strong>${c.city ? c.city + ' - ' : ''}${c.company} - ${c.position}</strong><br>
                                         📅 ${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}
+                                        ${c.comments ? '<br>💬 ' + c.comments : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -635,6 +663,39 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             }
         }
 
+        function editCandidate(index) {
+            const candidate = candidates[index];
+            
+            if (confirm(`¿Deseas editar a ${candidate.fullName}? Los datos actuales se cargarán en el formulario.`)) {
+                // Cargar datos del candidato en el formulario
+                document.getElementById('candidateLastName').value = candidate.lastName;
+                document.getElementById('candidateFirstName').value = candidate.firstName;
+                document.getElementById('candidateCedula').value = candidate.cedula;
+                
+                // Cargar contratos
+                currentCandidate = {
+                    firstName: candidate.firstName,
+                    lastName: candidate.lastName,
+                    cedula: candidate.cedula,
+                    contracts: [...candidate.contracts]
+                };
+                
+                // Eliminar de la lista de guardados
+                candidates.splice(index, 1);
+                
+                // Actualizar vista
+                renderContractsTable();
+                checkOverlaps();
+                calculateTotal();
+                renderCandidates();
+                
+                // Scroll al formulario
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                alert('✏️ Candidato cargado para edición. Cuando termines, presiona "Guardar Candidato" nuevamente.');
+            }
+        }
+
         function exportToExcel(index) {
             const candidate = candidates[index];
             const overlaps = getOverlaps(candidate.contracts);
@@ -642,7 +703,8 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const resumenData = [
                 ['REPORTE DE EXPERIENCIA LABORAL'],
                 [],
-                ['Candidato:', candidate.name],
+                ['Apellido:', candidate.lastName],
+                ['Nombre:', candidate.firstName],
                 ['Cédula:', candidate.cedula],
                 ['Fecha de Evaluación:', candidate.savedAt],
                 [],
@@ -653,7 +715,7 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             ];
 
             const contractsData = [
-                ['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']
+                ['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']
             ];
             
             candidate.contracts.forEach((contract, idx) => {
@@ -665,7 +727,8 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                     contract.position,
                     new Date(contract.startDate).toLocaleDateString(),
                     new Date(contract.endDate).toLocaleDateString(),
-                    formatExperience(days)
+                    formatExperience(days),
+                    contract.comments || ''
                 ]);
             });
 
@@ -693,14 +756,14 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const ws3 = XLSX.utils.aoa_to_sheet(overlapsData);
             
             ws1['!cols'] = [{ wch: 30 }, { wch: 40 }];
-            ws2['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+            ws2['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
             ws3['!cols'] = [{ wch: 5 }, { wch: 35 }, { wch: 35 }, { wch: 20 }];
             
             XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
             XLSX.utils.book_append_sheet(wb, ws2, 'Contratos');
             XLSX.utils.book_append_sheet(wb, ws3, 'Traslapes');
             
-            XLSX.writeFile(wb, 'experiencia_' + candidate.cedula + '_' + candidate.name.replace(/\s+/g, '_') + '.xlsx');
+            XLSX.writeFile(wb, 'experiencia_' + candidate.cedula + '_' + candidate.firstName + '_' + candidate.lastName + '.xlsx');
         }
 
         function exportAllCandidates() {
@@ -715,13 +778,14 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                 ['Fecha del Reporte:', new Date().toLocaleString()],
                 ['Total de Candidatos:', candidates.length],
                 [],
-                ['No.', 'Nombre', 'Cédula', 'Experiencia Total', 'Contratos', 'Fecha Evaluación']
+                ['No.', 'Apellido', 'Nombre', 'Cédula', 'Experiencia Total', 'Contratos', 'Fecha Evaluación']
             ];
 
             candidates.forEach((candidate, idx) => {
                 resumenData.push([
                     idx + 1,
-                    candidate.name,
+                    candidate.lastName,
+                    candidate.firstName,
                     candidate.cedula,
                     formatExperience(candidate.totalExperience),
                     candidate.contracts.length,
@@ -731,21 +795,23 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
 
             // Hoja 2: Todos los contratos de todos los candidatos
             const allContractsData = [
-                ['Candidato', 'Cédula', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']
+                ['Apellido', 'Nombre', 'Cédula', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']
             ];
 
             candidates.forEach(candidate => {
                 candidate.contracts.forEach(contract => {
                     const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
                     allContractsData.push([
-                        candidate.name,
+                        candidate.lastName,
+                        candidate.firstName,
                         candidate.cedula,
                         contract.city || '',
                         contract.company,
                         contract.position,
                         new Date(contract.startDate).toLocaleDateString(),
                         new Date(contract.endDate).toLocaleDateString(),
-                        formatExperience(days)
+                        formatExperience(days),
+                        contract.comments || ''
                     ]);
                 });
             });
@@ -754,14 +820,26 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const detailData = [['DETALLE POR CANDIDATO'], []];
 
             candidates.forEach((candidate, idx) => {
-                detailData.push([`CANDIDATO ${idx + 1}: ${candidate.name}`]);
+                detailData.push([`CANDIDATO ${idx + 1}: ${candidate.lastName} ${candidate.firstName}`]);
                 detailData.push(['Cédula:', candidate.cedula]);
                 detailData.push(['Experiencia Total:', formatExperience(candidate.totalExperience)]);
                 detailData.push(['Total Contratos:', candidate.contracts.length]);
                 detailData.push([]);
                 
-                detailData.push(['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']);
+                detailData.push(['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']);
                 candidate.contracts.forEach((contract, cIdx) => {
+                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                    detailData.push([
+                        cIdx + 1,
+                        contract.city || '',
+                        contract.company,
+                        contract.position,
+                        new Date(contract.startDate).toLocaleDateString(),
+                        new Date(contract.endDate).toLocaleDateString(),
+                        formatExperience(days),
+                        contract.comments || ''
+                    ]);
+                });forEach((contract, cIdx) => {
                     const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
                     detailData.push([
                         cIdx + 1,
@@ -798,9 +876,9 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             const ws2 = XLSX.utils.aoa_to_sheet(allContractsData);
             const ws3 = XLSX.utils.aoa_to_sheet(detailData);
             
-            ws1['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 20 }];
-            ws2['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
-            ws3['!cols'] = [{ wch: 10 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
+            ws1['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 20 }];
+            ws2['!cols'] = [{ wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
+            ws3['!cols'] = [{ wch: 10 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
             
             XLSX.utils.book_append_sheet(wb, ws1, 'Resumen General');
             XLSX.utils.book_append_sheet(wb, ws2, 'Todos los Contratos');

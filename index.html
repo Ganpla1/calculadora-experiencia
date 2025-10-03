@@ -17,12 +17,13 @@
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; }
         label { font-weight: 600; margin-bottom: 8px; color: #555; font-size: 14px; }
-        input, textarea { padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: border 0.3s; font-family: inherit; }
-        input:focus, textarea:focus { outline: none; border-color: #667eea; }
+        input, textarea, select { padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: border 0.3s; font-family: inherit; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #667eea; }
         textarea { resize: vertical; min-height: 120px; }
         .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: #667eea; color: white; }
         .btn-primary:hover { background: #5568d3; transform: translateY(-2px); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; transform: none; }
         .btn-secondary { background: #10b981; color: white; }
         .btn-secondary:hover { background: #059669; }
         .btn-success { background: #10b981; color: white; width: 100%; justify-content: center; }
@@ -31,21 +32,22 @@
         .btn-danger:hover { background: #dc2626; }
         .btn-warning { background: #f59e0b; color: white; padding: 8px 12px; }
         .btn-warning:hover { background: #d97706; }
+        .btn-info { background: #06b6d4; color: white; }
+        .btn-info:hover { background: #0891b2; }
         .btn-small { padding: 6px 12px; font-size: 14px; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
-        .tab { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; }
-        .tab.active { color: #667eea; border-bottom-color: #667eea; }
-        .tab:hover { color: #667eea; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .file-upload-area { border: 2px dashed #667eea; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: #f8f9ff; }
+        .file-upload-area:hover { border-color: #5568d3; background: #eef0ff; }
+        .file-upload-area input { display: none; }
+        .file-name { color: #667eea; font-weight: 600; margin-top: 10px; min-height: 20px; }
         .contract-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .contract-table th { background: #f3f4f6; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
-        .contract-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+        .contract-table th { background: #f3f4f6; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; font-size: 13px; }
+        .contract-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
         .contract-table tr:hover { background: #f9fafb; }
         .contract-table input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
         .contract-table input[type="date"]:focus { border-color: #667eea; outline: none; }
-        .contract-table input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .contract-table input:focus { border-color: #667eea; }
+        .contract-table input, .contract-table textarea, .contract-table select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 13px; }
+        .contract-table textarea { resize: vertical; min-height: 60px; }
+        .contract-table input:focus, .contract-table textarea:focus, .contract-table select:focus { border-color: #667eea; outline: none; }
         .action-buttons { display: flex; gap: 5px; }
         .warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; border-radius: 4px; }
         .warning-box p { color: #92400e; font-size: 14px; margin: 5px 0; }
@@ -67,101 +69,58 @@
         .helper-text { font-size: 12px; color: #6b7280; margin-top: 5px; }
         .error-row { background: #fee2e2 !important; }
         .success-message { background: #d1fae5; color: #065f46; padding: 12px; border-radius: 6px; margin: 10px 0; }
+        .validation-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+        .validation-badge.validated { background: #dcfce7; color: #065f46; }
+        .validation-badge.pending { background: #fef3c7; color: #92400e; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>📊 Calculadora de Experiencia Laboral</h1>
+            <h1>📊 Calculadora de Experiencia Laboral y Docente</h1>
             <div class="info-box">
-                <p><strong>💡 Nuevo:</strong> Ahora puedes pegar datos directamente desde Excel!</p>
-                <p>✅ Copia desde tu tabla → Pega aquí → Valida y edita fechas → Calcula experiencia</p>
+                <p><strong>💡 Instrucción:</strong> Carga los archivos Excel con experiencia profesional y docente de todos los candidatos</p>
+                <p>✅ El sistema organizará la información automáticamente por identificación y permitirá validar y editar cada candidato</p>
             </div>
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label>👤 Apellido del Candidato</label>
-                    <input type="text" id="candidateLastName" placeholder="Ej: Pérez García">
+                <div class="file-upload-area" onclick="document.getElementById('professionalFile').click()">
+                    <div style="font-size: 48px;">📄</div>
+                    <div style="font-weight: 600; margin: 10px 0;">Experiencia Profesional</div>
+                    <div style="font-size: 12px; color: #666;">Click para seleccionar archivo Excel</div>
+                    <input type="file" id="professionalFile" accept=".xlsx,.xls">
+                    <div class="file-name" id="profFileName"></div>
                 </div>
-                <div class="form-group">
-                    <label>👤 Nombre del Candidato</label>
-                    <input type="text" id="candidateFirstName" placeholder="Ej: Juan">
-                </div>
-                <div class="form-group">
-                    <label>🆔 Cédula de Ciudadanía</label>
-                    <input type="text" id="candidateCedula" placeholder="Ej: 1234567890">
+
+                <div class="file-upload-area" onclick="document.getElementById('teachingFile').click()">
+                    <div style="font-size: 48px;">🎓</div>
+                    <div style="font-weight: 600; margin: 10px 0;">Experiencia Docente</div>
+                    <div style="font-size: 12px; color: #666;">Click para seleccionar archivo Excel</div>
+                    <input type="file" id="teachingFile" accept=".xlsx,.xls">
+                    <div class="file-name" id="teachFileName"></div>
                 </div>
             </div>
 
-            <hr class="divider">
-
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('paste')">📋 Pegar desde Excel</button>
-                <button class="tab" onclick="switchTab('manual')">➕ Agregar Manual</button>
-            </div>
-
-            <div id="pasteTab" class="tab-content active">
-                <h2>📋 Pegar Datos desde Excel</h2>
-                <div class="form-group">
-                    <label>Pega aquí los datos copiados de Excel</label>
-                    <textarea id="pasteArea" placeholder="Selecciona TODAS las filas de tu tabla de Excel (incluye todas las columnas) y pégalas aquí con Ctrl+V
-
-La aplicación detectará automáticamente:
-- Columna CIUDAD
-- Columna ENTIDAD (empresa)
-- Columna CARGO
-- Columna FECHA INGRESO
-- Columna FECHA RETIRO
-
-Ejemplo:
-VALLE DEL CAUCA    ROLDANILLO    HOSPITAL SAN ANTONIO ESE    CONTRATISTA    2023-02-15    2023-12-31    VER
-BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    2023-12-28    VER"></textarea>
-                    <p class="helper-text">💡 Tip: Selecciona las filas completas (con todas las columnas) y pega aquí. El sistema ignorará las columnas que no necesita.</p>
-                </div>
-                <button class="btn btn-primary" onclick="processPastedData()">🔄 Procesar Datos</button>
-            </div>
-
-            <div id="manualTab" class="tab-content">
-                <h2>➕ Agregar Contrato Manual</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Ciudad (Opcional)</label>
-                        <input type="text" id="city" placeholder="Ej: Bogotá D.C.">
-                    </div>
-                    <div class="form-group">
-                        <label>Empresa *</label>
-                        <input type="text" id="company" placeholder="Nombre de la empresa">
-                    </div>
-                    <div class="form-group">
-                        <label>Cargo *</label>
-                        <input type="text" id="position" placeholder="Título del cargo">
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Inicio *</label>
-                        <input type="date" id="startDate">
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Fin *</label>
-                        <input type="date" id="endDate">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Comentarios (Opcional)</label>
-                        <textarea id="comments" placeholder="Notas adicionales sobre este contrato..." style="min-height: 80px;"></textarea>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="addContract()">➕ Agregar Contrato</button>
-            </div>
-
-            <div id="contractsTableContainer"></div>
-            <div id="overlapWarning"></div>
-            <div id="totalExperience"></div>
-            <div id="saveButton"></div>
+            <button class="btn btn-primary" id="loadFilesBtn" onclick="loadExcelFiles()" disabled style="width: 100%;">
+                📥 Cargar Archivos y Procesar Candidatos
+            </button>
         </div>
 
         <div class="card" id="candidatesList" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;">📋 Candidatos Evaluados (<span id="candidatesCount">0</span>)</h2>
-                <button class="btn btn-secondary" onclick="exportAllCandidates()">📊 Descargar Reporte Completo (Todos)</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0;">📋 Candidatos Cargados (<span id="candidatesCount">0</span>)</h2>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="exportAllCandidates()">📊 Reporte Excel</button>
+                    <button class="btn btn-primary" onclick="exportToJSON()">💾 Backup JSON</button>
+                    <button class="btn btn-primary" onclick="importFromJSON()">📥 Importar JSON(s)</button>
+                    <button class="btn btn-warning" onclick="checkDuplicatesInFiles()">🔍 Analizar Duplicados</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Todo</button>
+                </div>
+            </div>
+            <div class="info-box" style="margin-bottom: 15px;">
+                <p><strong>💾 Guardado Automático:</strong> Todos los cambios se guardan automáticamente en tu navegador.</p>
+                <p><strong>✏️ Edición:</strong> Puedes editar directamente en las tablas, duplicar o eliminar registros.</p>
+                <p><strong>✅ Validación:</strong> Marca cada candidato como validado cuando termines de revisar su información.</p>
             </div>
             <div id="candidatesContainer"></div>
         </div>
@@ -169,289 +128,405 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
 
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script>
-        let currentCandidate = {
-            firstName: '',
-            lastName: '',
-            cedula: '',
-            contracts: []
-        };
         let candidates = [];
+        const REFERENCE_DATE = new Date('2025-09-17');
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'paste') {
-                document.querySelector('.tab:nth-child(1)').classList.add('active');
-                document.getElementById('pasteTab').classList.add('active');
-            } else {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
-                document.getElementById('manualTab').classList.add('active');
+        window.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            renderCandidates();
+        });
+
+        document.getElementById('professionalFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('profFileName').textContent = '✓ ' + file.name;
+                checkFilesLoaded();
             }
+        });
+
+        document.getElementById('teachingFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('teachFileName').textContent = '✓ ' + file.name;
+                checkFilesLoaded();
+            }
+        });
+
+        function checkFilesLoaded() {
+            const profFile = document.getElementById('professionalFile').files[0];
+            const teachFile = document.getElementById('teachingFile').files[0];
+            document.getElementById('loadFilesBtn').disabled = !profFile && !teachFile;
         }
 
-        function processPastedData() {
-            const pasteArea = document.getElementById('pasteArea');
-            const text = pasteArea.value.trim();
-
-            if (!text) {
-                alert('Por favor pega los datos de Excel en el área de texto');
-                return;
-            }
-
-            const lines = text.split('\n');
-            let processed = 0;
-            let errors = 0;
-
-            lines.forEach((line, index) => {
-                if (!line.trim()) return; // Ignorar líneas vacías
-                
-                const parts = line.split('\t');
-                
-                // Si tiene 7+ columnas, es la tabla completa (Departamento, Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro, Documentos)
-                // Tomamos: columna 1 (Ciudad), columna 2 (Entidad), columna 3 (Cargo), columna 4 (Fecha Ingreso), columna 5 (Fecha Retiro)
-                let city, company, position, startDate, endDate;
-                
-                if (parts.length >= 7) {
-                    // Formato con todas las columnas (Departamento, Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro, Docs)
-                    city = parts[1].trim(); // Ciudad
-                    company = parts[2].trim(); // Entidad
-                    position = parts[3].trim(); // Cargo
-                    startDate = parseDate(parts[4].trim()); // Fecha Ingreso
-                    endDate = parseDate(parts[5].trim()); // Fecha Retiro
-                } else if (parts.length >= 5) {
-                    // Formato con Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro
-                    city = parts[0].trim();
-                    company = parts[1].trim();
-                    position = parts[2].trim();
-                    startDate = parseDate(parts[3].trim());
-                    endDate = parseDate(parts[4].trim());
-                } else if (parts.length >= 4) {
-                    // Formato simplificado sin ciudad (Entidad, Cargo, FechaIngreso, FechaRetiro)
-                    city = '';
-                    company = parts[0].trim();
-                    position = parts[1].trim();
-                    startDate = parseDate(parts[2].trim());
-                    endDate = parseDate(parts[3].trim());
-                } else {
-                    errors++;
-                    return;
-                }
-
-                if (company && position && startDate && endDate && company !== 'ENTIDAD' && position !== 'CARGO' && city !== 'CIUDAD') {
-                    // Validar que las fechas sean correctas
-                    const start = new Date(startDate);
-                    const end = new Date(endDate);
-                    
-                    if (start < end) {
-                        currentCandidate.contracts.push({
-                            id: Date.now() + index + Math.random(),
-                            city: city,
-                            company: company,
-                            position: position,
-                            startDate: startDate,
-                            endDate: endDate,
-                            comments: ''
-                        });
-                        processed++;
-                    } else {
-                        errors++;
-                    }
-                } else if (company && company !== 'ENTIDAD') {
-                    errors++;
-                }
-            });
-
-            pasteArea.value = '';
-
-            if (processed > 0) {
-                renderContractsTable();
-                checkOverlaps();
-                calculateTotal();
-                
-                const message = document.createElement('div');
-                message.className = 'success-message';
-                message.textContent = `✅ Se procesaron ${processed} contrato(s). ${errors > 0 ? `⚠️ ${errors} fila(s) con errores o encabezados fueron omitidas.` : ''}`;
-                document.getElementById('pasteTab').appendChild(message);
-                setTimeout(() => message.remove(), 5000);
-            } else {
-                alert('No se pudo procesar ningún dato. Asegúrate de copiar las filas con: Ciudad, Entidad, Cargo y Fechas.\n\nSi copiaste toda la tabla con encabezados, intenta copiar solo las filas de datos (sin el encabezado).');
-            }
-        }
-
-        function parseDate(dateStr) {
-            // Intenta varios formatos de fecha
+        function parseDateString(dateStr) {
             if (!dateStr) return null;
             
-            // Formato YYYY-MM-DD
+            // Convertir a string y limpiar espacios extra
+            dateStr = String(dateStr).trim().replace(/\s+/g, ' ');
+            
+            // Verificar si es fecha de referencia específica
+            if (dateStr === '31-12-1969 0:00' || dateStr === '31-12-1969') {
+                return null;
+            }
+            
+            // Formato: 'd-m-yyyy  0:00' o 'dd-mm-yyyy 0:00' (puede tener espacios dobles)
+            const match = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);
+            if (match) {
+                const day = match[1].padStart(2, '0');
+                const month = match[2].padStart(2, '0');
+                const year = match[3];
+                
+                // Validar que día y mes sean válidos
+                if (parseInt(day) > 31 || parseInt(day) < 1) return null;
+                if (parseInt(month) > 12 || parseInt(month) < 1) return null;
+                
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Formato: 'd/m/yyyy' o 'dd/mm/yyyy'
+            const match2 = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (match2) {
+                const day = match2[1].padStart(2, '0');
+                const month = match2[2].padStart(2, '0');
+                const year = match2[3];
+                
+                if (parseInt(day) > 31 || parseInt(day) < 1) return null;
+                if (parseInt(month) > 12 || parseInt(month) < 1) return null;
+                
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Si ya está en formato ISO (yyyy-mm-dd)
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
                 return dateStr;
             }
             
-            // Formato DD/MM/YYYY
-            const match1 = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-            if (match1) {
-                const [_, day, month, year] = match1;
-                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            }
-            
-            // Formato DD-MM-YYYY
-            const match2 = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-            if (match2) {
-                const [_, day, month, year] = match2;
-                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            }
-
-            // Intenta crear fecha directamente
-            const date = new Date(dateStr);
-            if (!isNaN(date.getTime())) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
             return null;
         }
 
-        function addContract() {
-            const city = document.getElementById('city').value.trim();
-            const company = document.getElementById('company').value.trim();
-            const position = document.getElementById('position').value.trim();
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const comments = document.getElementById('comments').value.trim();
-
-            if (!company || !position || !startDate || !endDate) {
-                alert('Por favor completa todos los campos obligatorios del contrato');
-                return;
+        function processDate(dateValue) {
+            // Si es undefined, null, vacío o la fecha especial -> usar fecha de referencia
+            if (dateValue === undefined || 
+                dateValue === null || 
+                dateValue === '' || 
+                String(dateValue).trim() === '' ||
+                String(dateValue).trim() === '31-12-1969  0:00' || 
+                String(dateValue).trim() === '31-12-1969 0:00') {
+                return REFERENCE_DATE.toISOString().split('T')[0];
             }
-
-            if (new Date(startDate) >= new Date(endDate)) {
-                alert('La fecha de fin debe ser posterior a la fecha de inicio');
-                return;
+            
+            // Si es número de serie de Excel
+            if (typeof dateValue === 'number') {
+                const date = new Date((dateValue - 25569) * 86400 * 1000);
+                if (isNaN(date.getTime())) return REFERENCE_DATE.toISOString().split('T')[0];
+                return date.toISOString().split('T')[0];
             }
-
-            const contract = {
-                id: Date.now(),
-                city: city,
-                company: company,
-                position: position,
-                startDate: startDate,
-                endDate: endDate,
-                comments: comments
-            };
-
-            currentCandidate.contracts.push(contract);
-
-            document.getElementById('city').value = '';
-            document.getElementById('company').value = '';
-            document.getElementById('position').value = '';
-            document.getElementById('startDate').value = '';
-            document.getElementById('endDate').value = '';
-            document.getElementById('comments').value = '';
-
-            renderContractsTable();
-            checkOverlaps();
-            calculateTotal();
+            
+            // Intentar parsear como string
+            const parsedStr = parseDateString(dateValue);
+            
+            // Si no se pudo parsear, usar fecha de referencia
+            if (!parsedStr) {
+                console.log('No se pudo parsear fecha:', dateValue);
+                return REFERENCE_DATE.toISOString().split('T')[0];
+            }
+            
+            // Validar que la fecha sea válida
+            const date = new Date(parsedStr);
+            if (isNaN(date.getTime())) {
+                console.log('Fecha inválida después de parsear:', parsedStr);
+                return REFERENCE_DATE.toISOString().split('T')[0];
+            }
+            
+            return parsedStr;
         }
 
-        function updateContract(id, field, value) {
-            const contract = currentCandidate.contracts.find(c => c.id === id);
+        async function loadExcelFiles() {
+            const profFile = document.getElementById('professionalFile').files[0];
+            const teachFile = document.getElementById('teachingFile').files[0];
+
+            const profData = profFile ? await loadProfessionalExperience(profFile) : {};
+            const teachData = teachFile ? await loadTeachingExperience(teachFile) : {};
+
+            const allIds = new Set([...Object.keys(profData), ...Object.keys(teachData)]);
+            
+            allIds.forEach(id => {
+                const existing = candidates.find(c => c.cedula === id);
+                if (!existing) {
+                    const candidate = {
+                        firstName: profData[id]?.name || teachData[id]?.name || '',
+                        lastName: profData[id]?.name || teachData[id]?.name || '',
+                        fullName: profData[id]?.name || teachData[id]?.name || '',
+                        cedula: id,
+                        generalComments: '',
+                        contracts: profData[id]?.contracts || [],
+                        teachingExperience: teachData[id]?.teaching || [],
+                        totalExperience: 0,
+                        savedAt: new Date().toLocaleString(),
+                        validated: false
+                    };
+                    
+                    const allExperiences = [];
+                    candidate.contracts.forEach(c => {
+                        allExperiences.push({startDate: c.startDate, endDate: c.endDate});
+                    });
+                    candidate.teachingExperience.forEach(t => {
+                        const equivDays = calculateTeachingEquivalent(t);
+                        const start = new Date(t.startDate);
+                        const adjustedEnd = new Date(start.getTime() + (equivDays * 24 * 60 * 60 * 1000));
+                        allExperiences.push({
+                            startDate: t.startDate,
+                            endDate: adjustedEnd.toISOString().split('T')[0]
+                        });
+                    });
+                    candidate.totalExperience = calculateTotalExperience(allExperiences);
+                    
+                    candidates.push(candidate);
+                }
+            });
+
+            saveToStorage();
+            renderCandidates();
+            alert(`✅ Se cargaron ${allIds.size} candidatos exitosamente`);
+        }
+
+        async function loadProfessionalExperience(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet);
+
+                        const byCandidate = {};
+                        
+                        rows.forEach(row => {
+                            const id = String(row.Identificacion || row.identificacion || '').trim();
+                            if (!id) return;
+
+                            if (!byCandidate[id]) {
+                                byCandidate[id] = {
+                                    name: row.Nombre || row.nombre || '',
+                                    contracts: []
+                                };
+                            }
+
+                            // Procesar fecha_inicio - NUNCA debe ser la fecha de referencia a menos que esté realmente vacía
+                            const fechaInicio = row.fecha_inicio || row.fechaInicio || row.FECHA_INICIO;
+                            const startDate = processDate(fechaInicio);
+                            
+                            // Procesar fecha_retiro - SI puede ser la fecha de referencia si está vacía
+                            const fechaRetiro = row.fecha_retiro || row.fechaRetiro || row.FECHA_RETIRO;
+                            const endDate = processDate(fechaRetiro);
+
+                            byCandidate[id].contracts.push({
+                                id: Date.now() + Math.random(),
+                                city: row.ciudad || row.CIUDAD || '',
+                                company: row.entidad || row.ENTIDAD || '',
+                                position: row.cargo || row.CARGO || '',
+                                startDate: startDate,
+                                endDate: endDate,
+                                comments: ''
+                            });
+                        });
+
+                        resolve(byCandidate);
+                    } catch (error) {
+                        alert('Error al cargar experiencia profesional: ' + error.message);
+                        resolve({});
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        async function loadTeachingExperience(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet);
+
+                        const byCandidate = {};
+                        
+                        rows.forEach(row => {
+                            const id = String(row.Identificacion || row.identificacion || '').trim();
+                            if (!id) return;
+
+                            if (!byCandidate[id]) {
+                                byCandidate[id] = {
+                                    name: row.Nombre || row.nombre || '',
+                                    teaching: []
+                                };
+                            }
+
+                            let dedication = row.dedicacion || row.DEDICACION || '';
+                            if (dedication.toLowerCase().includes('completo')) {
+                                dedication = 'Tiempo completo';
+                            } else if (dedication.toLowerCase().includes('medio')) {
+                                dedication = 'Medio tiempo';
+                            } else if (dedication.toLowerCase().includes('catedra') || dedication.toLowerCase().includes('cátedra')) {
+                                dedication = 'Hora Catedra';
+                            }
+
+                            // Procesar fecha_ingreso - NUNCA debe ser la fecha de referencia a menos que esté realmente vacía
+                            const fechaIngreso = row.fecha_ingreso || row.fechaIngreso || row.FECHA_INGRESO;
+                            const startDate = processDate(fechaIngreso);
+                            
+                            // Procesar fecha_retiro - SI puede ser la fecha de referencia si está vacía
+                            const fechaRetiro = row.fecha_retiro || row.fechaRetiro || row.FECHA_RETIRO;
+                            const endDate = processDate(fechaRetiro);
+
+                            byCandidate[id].teaching.push({
+                                id: Date.now() + Math.random(),
+                                city: row.ciudad || row.CIUDAD || '',
+                                institution: row.institucion || row.INSTITUCION || '',
+                                modality: row.modalidad || row.MODALIDAD || '',
+                                program: row.programa || row.PROGRAMA || '',
+                                dedication: dedication,
+                                hoursPerWeek: null,
+                                startDate: startDate,
+                                endDate: endDate,
+                                comments: ''
+                            });
+                        });
+
+                        resolve(byCandidate);
+                    } catch (error) {
+                        alert('Error al cargar experiencia docente: ' + error.message);
+                        resolve({});
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem('candidatesData', JSON.stringify(candidates));
+                return true;
+            } catch (e) {
+                console.error('Error al guardar:', e);
+                return false;
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('candidatesData');
+                if (saved) {
+                    candidates = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Error al cargar:', e);
+                candidates = [];
+            }
+        }
+
+        function toggleValidation(index) {
+            candidates[index].validated = !candidates[index].validated;
+            saveToStorage();
+            renderCandidates();
+        }
+
+        function updateContract(candidateIndex, id, field, value) {
+            const contract = candidates[candidateIndex].contracts.find(c => c.id === id);
             if (contract) {
                 contract[field] = value;
-                checkOverlaps();
-                calculateTotal();
+                saveToStorage();
             }
         }
 
-        function deleteContract(id) {
+        function updateTeaching(candidateIndex, id, field, value) {
+            const teaching = candidates[candidateIndex].teachingExperience.find(t => t.id === id);
+            if (teaching) {
+                teaching[field] = value;
+                saveToStorage();
+            }
+        }
+
+        function deleteContract(candidateIndex, id) {
             if (confirm('¿Eliminar este contrato?')) {
-                currentCandidate.contracts = currentCandidate.contracts.filter(c => c.id !== id);
-                renderContractsTable();
-                checkOverlaps();
-                calculateTotal();
+                candidates[candidateIndex].contracts = candidates[candidateIndex].contracts.filter(c => c.id !== id);
+                recalculateExperience(candidateIndex);
+                saveToStorage();
+                renderCandidates();
             }
         }
 
-        function duplicateContract(id) {
-            const index = currentCandidate.contracts.findIndex(c => c.id === id);
+        function deleteTeaching(candidateIndex, id) {
+            if (confirm('¿Eliminar esta experiencia docente?')) {
+                candidates[candidateIndex].teachingExperience = candidates[candidateIndex].teachingExperience.filter(t => t.id !== id);
+                recalculateExperience(candidateIndex);
+                saveToStorage();
+                renderCandidates();
+            }
+        }
+
+        function duplicateContract(candidateIndex, id) {
+            const index = candidates[candidateIndex].contracts.findIndex(c => c.id === id);
             if (index !== -1) {
-                const contract = currentCandidate.contracts[index];
-                const newContract = {
-                    ...contract,
-                    id: Date.now()
-                };
-                // Insertar justo después del contrato original
-                currentCandidate.contracts.splice(index + 1, 0, newContract);
-                renderContractsTable();
-                checkOverlaps();
-                calculateTotal();
+                const contract = candidates[candidateIndex].contracts[index];
+                const newContract = {...contract, id: Date.now()};
+                candidates[candidateIndex].contracts.splice(index + 1, 0, newContract);
+                saveToStorage();
+                renderCandidates();
             }
         }
 
-        function renderContractsTable() {
-            const container = document.getElementById('contractsTableContainer');
+        function duplicateTeaching(candidateIndex, id) {
+            const index = candidates[candidateIndex].teachingExperience.findIndex(t => t.id === id);
+            if (index !== -1) {
+                const teaching = candidates[candidateIndex].teachingExperience[index];
+                const newTeaching = {...teaching, id: Date.now()};
+                candidates[candidateIndex].teachingExperience.splice(index + 1, 0, newTeaching);
+                saveToStorage();
+                renderCandidates();
+            }
+        }
+
+        function recalculateExperience(candidateIndex) {
+            const candidate = candidates[candidateIndex];
+            const allExperiences = [];
             
-            if (currentCandidate.contracts.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let html = '<hr class="divider"><h3>📝 Contratos Registrados (' + currentCandidate.contracts.length + ')</h3>';
-            html += '<p class="helper-text">💡 Puedes editar directamente en la tabla, duplicar contratos para dividirlos, o eliminarlos</p>';
-            html += '<table class="contract-table"><thead><tr>';
-            html += '<th style="width: 3%">#</th>';
-            html += '<th style="width: 10%">Ciudad</th>';
-            html += '<th style="width: 18%">Empresa</th>';
-            html += '<th style="width: 15%">Cargo</th>';
-            html += '<th style="width: 10%">Fecha Inicio</th>';
-            html += '<th style="width: 10%">Fecha Fin</th>';
-            html += '<th style="width: 8%">Duración</th>';
-            html += '<th style="width: 18%">Comentarios</th>';
-            html += '<th style="width: 8%">Acciones</th>';
-            html += '</tr></thead><tbody>';
-
-            currentCandidate.contracts.forEach((contract, index) => {
-                const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                const isError = days <= 0;
-                
-                html += `<tr class="${isError ? 'error-row' : ''}">`;
-                html += `<td>${index + 1}</td>`;
-                html += `<td><input type="text" value="${contract.city || ''}" onchange="updateContract(${contract.id}, 'city', this.value)" placeholder="Ciudad"></td>`;
-                html += `<td><input type="text" value="${contract.company}" onchange="updateContract(${contract.id}, 'company', this.value)"></td>`;
-                html += `<td><input type="text" value="${contract.position}" onchange="updateContract(${contract.id}, 'position', this.value)"></td>`;
-                html += `<td><input type="date" value="${contract.startDate}" onblur="updateContract(${contract.id}, 'startDate', this.value); renderContractsTable()"></td>`;
-                html += `<td><input type="date" value="${contract.endDate}" onblur="updateContract(${contract.id}, 'endDate', this.value); renderContractsTable()"></td>`;
-                html += `<td>${isError ? '❌ Error' : formatExperience(days)}</td>`;
-                html += `<td><textarea onchange="updateContract(${contract.id}, 'comments', this.value)" placeholder="Notas...">${contract.comments || ''}</textarea></td>`;
-                html += `<td><div class="action-buttons">`;
-                html += `<button class="btn btn-warning btn-small" onclick="duplicateContract(${contract.id})" title="Duplicar para dividir">📋</button>`;
-                html += `<button class="btn btn-danger btn-small" onclick="deleteContract(${contract.id})" title="Eliminar">🗑️</button>`;
-                html += `</div></td>`;
-                html += `</tr>`;
+            candidate.contracts.forEach(c => {
+                allExperiences.push({startDate: c.startDate, endDate: c.endDate});
+            });
+            
+            candidate.teachingExperience.forEach(t => {
+                const equivDays = calculateTeachingEquivalent(t);
+                const start = new Date(t.startDate);
+                const adjustedEnd = new Date(start.getTime() + (equivDays * 24 * 60 * 60 * 1000));
+                allExperiences.push({
+                    startDate: t.startDate,
+                    endDate: adjustedEnd.toISOString().split('T')[0]
+                });
             });
 
-            html += '</tbody></table>';
-            container.innerHTML = html;
+            candidate.totalExperience = calculateTotalExperience(allExperiences);
         }
 
-        function checkOverlaps() {
-            const overlaps = getOverlaps(currentCandidate.contracts);
-            const container = document.getElementById('overlapWarning');
+        function calculateTeachingEquivalent(teaching) {
+            const start = new Date(teaching.startDate);
+            const end = new Date(teaching.endDate);
+            const totalDays = (end - start) / (1000 * 60 * 60 * 24);
 
-            if (overlaps.length === 0) {
-                container.innerHTML = '';
-                return;
+            if (teaching.dedication === 'Tiempo completo') {
+                return totalDays;
+            } else if (teaching.dedication === 'Medio tiempo') {
+                return totalDays / 2;
+            } else if (teaching.dedication === 'Hora Catedra') {
+                const weeks = totalDays / 7;
+                const totalHours = weeks * (teaching.hoursPerWeek || 0);
+                const months = totalHours / 206;
+                return months * 30;
             }
-
-            let html = '<div class="warning-box"><p><strong>⚠️ Traslapes Detectados:</strong></p>';
-            overlaps.forEach(overlap => {
-                html += `<p>• ${overlap.contract1.company} y ${overlap.contract2.company}: ${Math.floor(overlap.days)} días traslapados</p>`;
-            });
-            html += '<p><strong>Estos períodos se contarán una sola vez en el cálculo total.</strong></p></div>';
-
-            container.innerHTML = html;
+            return 0;
         }
 
         function getOverlaps(contracts) {
@@ -521,8 +596,9 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
 
         function formatExperience(days) {
             const years = Math.floor(days / 365);
-            const months = Math.floor((days % 365) / 30);
-            const remainingDays = Math.floor(days % 30);
+            const remainingAfterYears = days % 365;
+            const months = Math.floor(remainingAfterYears / 30.44);
+            const remainingDays = Math.floor(remainingAfterYears % 30.44);
             
             const parts = [];
             if (years > 0) parts.push(years + (years > 1 ? ' años' : ' año'));
@@ -532,74 +608,205 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             return parts.join(', ') || '0 días';
         }
 
-        function calculateTotal() {
-            const container = document.getElementById('totalExperience');
-            const saveBtn = document.getElementById('saveButton');
-
-            if (currentCandidate.contracts.length === 0) {
-                container.innerHTML = '';
-                saveBtn.innerHTML = '';
-                return;
+        function deleteCandidate(index) {
+            if (confirm('¿Estás seguro de eliminar este candidato?')) {
+                candidates.splice(index, 1);
+                saveToStorage();
+                renderCandidates();
             }
-
-            const totalDays = calculateTotalExperience(currentCandidate.contracts);
-            container.innerHTML = `
-                <div class="result-box">
-                    <p>✅ Experiencia Total (sin traslapes): ${formatExperience(totalDays)}</p>
-                </div>
-            `;
-
-            saveBtn.innerHTML = '<button class="btn btn-success" onclick="saveCandidate()">💾 Guardar Candidato</button>';
         }
 
-        function saveCandidate() {
-            const lastName = document.getElementById('candidateLastName').value.trim();
-            const firstName = document.getElementById('candidateFirstName').value.trim();
-            const cedula = document.getElementById('candidateCedula').value.trim();
+        function exportToJSON() {
+            const dataStr = JSON.stringify(candidates, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_candidatos_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert('✅ Backup descargado exitosamente');
+        }
 
-            if (!lastName) {
-                alert('Por favor ingresa el apellido del candidato');
+        function importFromJSON() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.multiple = true;
+            input.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+                
+                let allImported = [];
+                let filesProcessed = 0;
+                
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const imported = JSON.parse(event.target.result);
+                            allImported = allImported.concat(imported);
+                            filesProcessed++;
+                            
+                            if (filesProcessed === files.length) {
+                                mergeAndImportData(allImported);
+                            }
+                        } catch (err) {
+                            alert(`Error al leer ${file.name}`);
+                            filesProcessed++;
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            };
+            input.click();
+        }
+
+        function mergeAndImportData(importedCandidates) {
+            if (importedCandidates.length === 0) {
+                alert('No se encontraron candidatos');
                 return;
             }
 
-            if (!firstName) {
-                alert('Por favor ingresa el nombre del candidato');
-                return;
-            }
-
-            if (!cedula) {
-                alert('Por favor ingresa la cédula del candidato');
-                return;
-            }
-
-            if (currentCandidate.contracts.length === 0) {
-                alert('Por favor agrega al menos un contrato');
-                return;
-            }
-
-            const totalDays = calculateTotalExperience(currentCandidate.contracts);
+            let duplicates = [];
+            let newCandidates = [];
             
-            candidates.push({
-                firstName: firstName,
-                lastName: lastName,
-                fullName: lastName + ' ' + firstName,
-                cedula: cedula,
-                contracts: [...currentCandidate.contracts],
-                totalExperience: totalDays,
-                savedAt: new Date().toLocaleString()
+            importedCandidates.forEach(imported => {
+                const isDuplicate = candidates.some(existing => 
+                    existing.cedula === imported.cedula
+                );
+                
+                if (isDuplicate) {
+                    duplicates.push(imported);
+                } else {
+                    newCandidates.push(imported);
+                }
             });
 
-            document.getElementById('candidateLastName').value = '';
-            document.getElementById('candidateFirstName').value = '';
-            document.getElementById('candidateCedula').value = '';
-            currentCandidate = { firstName: '', lastName: '', cedula: '', contracts: [] };
+            let message = `📊 RESUMEN:\n\n`;
+            message += `📁 Total: ${importedCandidates.length}\n`;
+            message += `✅ Nuevos: ${newCandidates.length}\n`;
+            message += `⚠️ Duplicados: ${duplicates.length}\n\n`;
             
-            renderContractsTable();
-            checkOverlaps();
-            calculateTotal();
-            renderCandidates();
+            if (newCandidates.length > 0) {
+                message += `¿Importar ${newCandidates.length} candidato(s)?`;
+                
+                if (confirm(message)) {
+                    candidates = candidates.concat(newCandidates);
+                    saveToStorage();
+                    renderCandidates();
+                    alert(`✅ ${newCandidates.length} candidato(s) importado(s)`);
+                }
+            } else {
+                alert('Todos los candidatos ya existen');
+            }
+        }
 
-            alert('✅ Candidato guardado exitosamente!');
+        function checkDuplicatesInFiles() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.multiple = true;
+            input.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                if (files.length < 2) {
+                    alert('Selecciona al menos 2 archivos');
+                    return;
+                }
+                
+                let allCandidates = [];
+                let filesData = {};
+                let filesProcessed = 0;
+                
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            filesData[file.name] = data;
+                            allCandidates = allCandidates.concat(data.map(c => ({...c, source: file.name})));
+                            filesProcessed++;
+                            
+                            if (filesProcessed === files.length) {
+                                analyzeDuplicates(allCandidates, filesData);
+                            }
+                        } catch (err) {
+                            alert(`Error: ${file.name}`);
+                            filesProcessed++;
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            };
+            input.click();
+        }
+
+        function analyzeDuplicates(allCandidates, filesData) {
+            const seen = {};
+            const duplicates = [];
+            
+            allCandidates.forEach(candidate => {
+                const key = candidate.cedula;
+                
+                if (seen[key]) {
+                    seen[key].push(candidate.source);
+                    if (!duplicates.find(d => d.key === key)) {
+                        duplicates.push({
+                            key: key,
+                            candidate: candidate,
+                            sources: seen[key]
+                        });
+                    }
+                } else {
+                    seen[key] = [candidate.source];
+                }
+            });
+
+            let report = '📊 ANÁLISIS DE DUPLICADOS\n';
+            report += '='.repeat(50) + '\n\n';
+            report += `Archivos: ${Object.keys(filesData).length}\n`;
+            report += `Total candidatos: ${allCandidates.length}\n`;
+            report += `Duplicados: ${duplicates.length}\n\n`;
+            
+            if (duplicates.length > 0) {
+                report += 'LISTA:\n' + '-'.repeat(50) + '\n\n';
+                duplicates.forEach((dup, idx) => {
+                    report += `${idx + 1}. ${dup.candidate.fullName}\n`;
+                    report += `   CC: ${dup.candidate.cedula}\n`;
+                    report += `   Aparece en:\n`;
+                    dup.sources.forEach(source => {
+                        report += `   - ${source}\n`;
+                    });
+                    report += '\n';
+                });
+            } else {
+                report += '✅ Sin duplicados\n';
+            }
+
+            alert(report);
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_duplicados_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ ¿Eliminar TODOS los datos? No se puede deshacer.')) {
+                if (confirm('🔴 ÚLTIMA CONFIRMACIÓN')) {
+                    candidates = [];
+                    localStorage.removeItem('candidatesData');
+                    renderCandidates();
+                    alert('✅ Datos eliminados');
+                }
+            }
         }
 
         function renderCandidates() {
@@ -617,15 +824,35 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
 
             let html = '';
             candidates.forEach((candidate, index) => {
+                const contractsCount = candidate.contracts?.length || 0;
+                const teachingCount = candidate.teachingExperience?.length || 0;
+                const allExperiences = [
+                    ...candidate.contracts.map(c => ({...c, type: 'laboral', name: c.company})),
+                    ...(candidate.teachingExperience || []).map(t => ({...t, type: 'docente', name: t.institution}))
+                ];
+                const overlaps = getOverlaps(allExperiences);
+
                 html += `
                     <div class="candidate-card">
                         <div class="candidate-header">
                             <div class="candidate-info">
                                 <h3>${candidate.fullName}</h3>
                                 <p>CC: ${candidate.cedula}</p>
-                                <p>Guardado el ${candidate.savedAt}</p>
+                                <p>Guardado: ${candidate.savedAt}</p>
+                                <p style="font-size: 12px; color: #666;">💼 ${contractsCount} laboral(es) | 🎓 ${teachingCount} docente(s)</p>
+                                ${candidate.generalComments ? `<p style="font-size: 12px; color: #0066cc;">💬 ${candidate.generalComments}</p>` : ''}
+                                <div style="margin-top: 10px;">
+                                    <span class="validation-badge ${candidate.validated ? 'validated' : 'pending'}">
+                                        ${candidate.validated ? '✅ Validado' : '⚠️ Pendiente'}
+                                    </span>
+                                </div>
                             </div>
-                            <button class="btn btn-danger" onclick="deleteCandidate(${index})">🗑️ Eliminar</button>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn btn-${candidate.validated ? 'success' : 'warning'} btn-small" onclick="toggleValidation(${index})">
+                                    ${candidate.validated ? '✓' : '○'}
+                                </button>
+                                <button class="btn btn-danger btn-small" onclick="deleteCandidate(${index})">🗑️</button>
+                            </div>
                         </div>
                         
                         <div class="experience-badge">
@@ -633,22 +860,126 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
                         </div>
 
                         <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                            <button class="btn btn-secondary" style="flex: 1;" onclick="editCandidate(${index})">✏️ Editar Candidato</button>
                             <button class="btn btn-success" style="flex: 1;" onclick="exportToExcel(${index})">📥 Descargar Excel</button>
                         </div>
 
+                        ${overlaps.length > 0 ? `
+                        <div class="warning-box">
+                            <p><strong>⚠️ Traslapes Detectados: ${overlaps.length}</strong></p>
+                            ${overlaps.slice(0, 3).map(overlap => {
+                                const type1 = overlap.contract1.type === 'laboral' ? '💼' : '🎓';
+                                const type2 = overlap.contract2.type === 'laboral' ? '💼' : '🎓';
+                                return `<p>• ${type1} ${overlap.contract1.name} y ${type2} ${overlap.contract2.name}: ${Math.floor(overlap.days)} días</p>`;
+                            }).join('')}
+                            ${overlaps.length > 3 ? `<p>... y ${overlaps.length - 3} más</p>` : ''}
+                        </div>
+                        ` : ''}
+
+                        ${contractsCount > 0 ? `
                         <details>
-                            <summary>Ver ${candidate.contracts.length} contrato(s) registrado(s)</summary>
-                            <div class="contract-list">
-                                ${candidate.contracts.map(c => `
-                                    <div class="contract-list-item">
-                                        <strong>${c.city ? c.city + ' - ' : ''}${c.company} - ${c.position}</strong><br>
-                                        📅 ${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}
-                                        ${c.comments ? '<br>💬 ' + c.comments : ''}
-                                    </div>
-                                `).join('')}
+                            <summary>Ver ${contractsCount} contrato(s) laboral(es)</summary>
+                            <div style="overflow-x: auto;">
+                                <table class="contract-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ciudad</th>
+                                            <th>Empresa</th>
+                                            <th>Cargo</th>
+                                            <th>Inicio</th>
+                                            <th>Fin</th>
+                                            <th>Duración</th>
+                                            <th>Comentarios</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${candidate.contracts.map((c, cIdx) => {
+                                            const days = Math.floor((new Date(c.endDate) - new Date(c.startDate)) / (1000 * 60 * 60 * 24));
+                                            const isError = days <= 0;
+                                            return `
+                                            <tr class="${isError ? 'error-row' : ''}">
+                                                <td>${cIdx + 1}</td>
+                                                <td><input type="text" value="${c.city || ''}" onchange="updateContract(${index}, ${c.id}, 'city', this.value)"></td>
+                                                <td><input type="text" value="${c.company}" onchange="updateContract(${index}, ${c.id}, 'company', this.value)"></td>
+                                                <td><input type="text" value="${c.position}" onchange="updateContract(${index}, ${c.id}, 'position', this.value)"></td>
+                                                <td><input type="date" value="${c.startDate}" onchange="updateContract(${index}, ${c.id}, 'startDate', this.value); renderCandidates()"></td>
+                                                <td><input type="date" value="${c.endDate}" onchange="updateContract(${index}, ${c.id}, 'endDate', this.value); renderCandidates()"></td>
+                                                <td>${isError ? '❌' : formatExperience(days)}</td>
+                                                <td><textarea onchange="updateContract(${index}, ${c.id}, 'comments', this.value)">${c.comments || ''}</textarea></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-warning btn-small" onclick="duplicateContract(${index}, ${c.id})">📋</button>
+                                                        <button class="btn btn-danger btn-small" onclick="deleteContract(${index}, ${c.id})">🗑️</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
                             </div>
                         </details>
+                        ` : ''}
+
+                        ${teachingCount > 0 ? `
+                        <details style="margin-top: 10px;">
+                            <summary>Ver ${teachingCount} experiencia(s) docente(s)</summary>
+                            <div style="overflow-x: auto;">
+                                <table class="contract-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ciudad</th>
+                                            <th>Institución</th>
+                                            <th>Modalidad</th>
+                                            <th>Programa</th>
+                                            <th>Dedicación</th>
+                                            <th>H/Sem</th>
+                                            <th>Inicio</th>
+                                            <th>Fin</th>
+                                            <th>Equiv.</th>
+                                            <th>Comentarios</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${candidate.teachingExperience.map((t, tIdx) => {
+                                            const equivDays = calculateTeachingEquivalent(t);
+                                            const isError = equivDays <= 0;
+                                            return `
+                                            <tr class="${isError ? 'error-row' : ''}">
+                                                <td>${tIdx + 1}</td>
+                                                <td><input type="text" value="${t.city || ''}" onchange="updateTeaching(${index}, ${t.id}, 'city', this.value)"></td>
+                                                <td><input type="text" value="${t.institution}" onchange="updateTeaching(${index}, ${t.id}, 'institution', this.value)"></td>
+                                                <td><input type="text" value="${t.modality}" onchange="updateTeaching(${index}, ${t.id}, 'modality', this.value)"></td>
+                                                <td><input type="text" value="${t.program}" onchange="updateTeaching(${index}, ${t.id}, 'program', this.value)"></td>
+                                                <td>
+                                                    <select onchange="updateTeaching(${index}, ${t.id}, 'dedication', this.value); renderCandidates()">
+                                                        <option value="Tiempo completo" ${t.dedication === 'Tiempo completo' ? 'selected' : ''}>Tiempo completo</option>
+                                                        <option value="Medio tiempo" ${t.dedication === 'Medio tiempo' ? 'selected' : ''}>Medio tiempo</option>
+                                                        <option value="Hora Catedra" ${t.dedication === 'Hora Catedra' ? 'selected' : ''}>Hora Cátedra</option>
+                                                    </select>
+                                                </td>
+                                                <td>${t.dedication === 'Hora Catedra' ? `<input type="number" value="${t.hoursPerWeek || ''}" onchange="updateTeaching(${index}, ${t.id}, 'hoursPerWeek', parseInt(this.value)); renderCandidates()" min="1" style="width: 60px;">` : '-'}</td>
+                                                <td><input type="date" value="${t.startDate}" onchange="updateTeaching(${index}, ${t.id}, 'startDate', this.value); renderCandidates()"></td>
+                                                <td><input type="date" value="${t.endDate}" onchange="updateTeaching(${index}, ${t.id}, 'endDate', this.value); renderCandidates()"></td>
+                                                <td>${isError ? '❌' : formatExperience(equivDays)}</td>
+                                                <td><textarea onchange="updateTeaching(${index}, ${t.id}, 'comments', this.value)">${t.comments || ''}</textarea></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-warning btn-small" onclick="duplicateTeaching(${index}, ${t.id})">📋</button>
+                                                        <button class="btn btn-danger btn-small" onclick="deleteTeaching(${index}, ${t.id})">🗑️</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                        ` : ''}
                     </div>
                 `;
             });
@@ -656,236 +987,189 @@ BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    
             container.innerHTML = html;
         }
 
-        function deleteCandidate(index) {
-            if (confirm('¿Estás seguro de eliminar este candidato?')) {
-                candidates.splice(index, 1);
-                renderCandidates();
-            }
-        }
-
-        function editCandidate(index) {
-            const candidate = candidates[index];
-            
-            if (confirm(`¿Deseas editar a ${candidate.fullName}? Los datos actuales se cargarán en el formulario.`)) {
-                // Cargar datos del candidato en el formulario
-                document.getElementById('candidateLastName').value = candidate.lastName;
-                document.getElementById('candidateFirstName').value = candidate.firstName;
-                document.getElementById('candidateCedula').value = candidate.cedula;
-                
-                // Cargar contratos
-                currentCandidate = {
-                    firstName: candidate.firstName,
-                    lastName: candidate.lastName,
-                    cedula: candidate.cedula,
-                    contracts: [...candidate.contracts]
-                };
-                
-                // Eliminar de la lista de guardados
-                candidates.splice(index, 1);
-                
-                // Actualizar vista
-                renderContractsTable();
-                checkOverlaps();
-                calculateTotal();
-                renderCandidates();
-                
-                // Scroll al formulario
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                alert('✏️ Candidato cargado para edición. Cuando termines, presiona "Guardar Candidato" nuevamente.');
-            }
-        }
-
         function exportToExcel(index) {
             const candidate = candidates[index];
-            const overlaps = getOverlaps(candidate.contracts);
+            const overlaps = getOverlaps([
+                ...candidate.contracts.map(c => ({...c, type: 'laboral', name: c.company})),
+                ...(candidate.teachingExperience || []).map(t => ({...t, type: 'docente', name: t.institution}))
+            ]);
 
             const resumenData = [
-                ['REPORTE DE EXPERIENCIA LABORAL'],
+                ['REPORTE DE EXPERIENCIA LABORAL Y DOCENTE'],
                 [],
-                ['Apellido:', candidate.lastName],
-                ['Nombre:', candidate.firstName],
+                ['Nombre:', candidate.fullName],
                 ['Cédula:', candidate.cedula],
-                ['Fecha de Evaluación:', candidate.savedAt],
+                ['Fecha:', candidate.savedAt],
+                ['Validado:', candidate.validated ? 'SÍ' : 'NO'],
                 [],
-                ['EXPERIENCIA TOTAL (SIN TRASLAPES):', formatExperience(candidate.totalExperience)],
+                ['EXPERIENCIA TOTAL:', formatExperience(candidate.totalExperience)],
                 [],
-                ['Total de Contratos:', candidate.contracts.length],
-                ['Traslapes Detectados:', overlaps.length]
+                ['Contratos:', candidate.contracts?.length || 0],
+                ['Docente:', candidate.teachingExperience?.length || 0],
+                ['Traslapes:', overlaps.length]
             ];
 
             const contractsData = [
-                ['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']
+                ['EXPERIENCIA LABORAL'],
+                [],
+                ['No.', 'Ciudad', 'Empresa', 'Cargo', 'Inicio', 'Fin', 'Duración', 'Comentarios']
             ];
             
-            candidate.contracts.forEach((contract, idx) => {
-                const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                contractsData.push([
-                    idx + 1,
-                    contract.city || '',
-                    contract.company,
-                    contract.position,
-                    new Date(contract.startDate).toLocaleDateString(),
-                    new Date(contract.endDate).toLocaleDateString(),
-                    formatExperience(days),
-                    contract.comments || ''
-                ]);
-            });
+            if (candidate.contracts && candidate.contracts.length > 0) {
+                candidate.contracts.forEach((contract, idx) => {
+                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                    contractsData.push([
+                        idx + 1,
+                        contract.city || '',
+                        contract.company,
+                        contract.position,
+                        new Date(contract.startDate).toLocaleDateString(),
+                        new Date(contract.endDate).toLocaleDateString(),
+                        formatExperience(days),
+                        contract.comments || ''
+                    ]);
+                });
+            }
+
+            const teachingData = [
+                ['EXPERIENCIA DOCENTE'],
+                [],
+                ['No.', 'Ciudad', 'Institución', 'Modalidad', 'Programa', 'Dedicación', 'H/Sem', 'Inicio', 'Fin', 'Equiv.', 'Comentarios']
+            ];
+
+            if (candidate.teachingExperience && candidate.teachingExperience.length > 0) {
+                candidate.teachingExperience.forEach((teach, idx) => {
+                    const equivDays = calculateTeachingEquivalent(teach);
+                    teachingData.push([
+                        idx + 1,
+                        teach.city || '',
+                        teach.institution,
+                        teach.modality,
+                        teach.program,
+                        teach.dedication,
+                        teach.hoursPerWeek || '-',
+                        new Date(teach.startDate).toLocaleDateString(),
+                        new Date(teach.endDate).toLocaleDateString(),
+                        formatExperience(equivDays),
+                        teach.comments || ''
+                    ]);
+                });
+            }
 
             const overlapsData = [
-                ['No.', 'Contrato 1', 'Contrato 2', 'Días Traslapados']
+                ['TRASLAPES'],
+                [],
+                ['No.', 'Tipo 1', 'Exp 1', 'Tipo 2', 'Exp 2', 'Días']
             ];
             
             if (overlaps.length > 0) {
                 overlaps.forEach((overlap, idx) => {
                     overlapsData.push([
                         idx + 1,
-                        overlap.contract1.company + ' (' + overlap.contract1.position + ')',
-                        overlap.contract2.company + ' (' + overlap.contract2.position + ')',
-                        Math.floor(overlap.days) + ' días'
+                        overlap.contract1.type === 'laboral' ? 'Laboral' : 'Docente',
+                        overlap.contract1.name,
+                        overlap.contract2.type === 'laboral' ? 'Laboral' : 'Docente',
+                        overlap.contract2.name,
+                        Math.floor(overlap.days)
                     ]);
                 });
-            } else {
-                overlapsData.push(['No se detectaron traslapes entre contratos']);
             }
 
             const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumenData), 'Resumen');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(contractsData), 'Laboral');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(teachingData), 'Docente');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(overlapsData), 'Traslapes');
             
-            const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
-            const ws2 = XLSX.utils.aoa_to_sheet(contractsData);
-            const ws3 = XLSX.utils.aoa_to_sheet(overlapsData);
-            
-            ws1['!cols'] = [{ wch: 30 }, { wch: 40 }];
-            ws2['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
-            ws3['!cols'] = [{ wch: 5 }, { wch: 35 }, { wch: 35 }, { wch: 20 }];
-            
-            XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
-            XLSX.utils.book_append_sheet(wb, ws2, 'Contratos');
-            XLSX.utils.book_append_sheet(wb, ws3, 'Traslapes');
-            
-            XLSX.writeFile(wb, 'experiencia_' + candidate.cedula + '_' + candidate.firstName + '_' + candidate.lastName + '.xlsx');
+            XLSX.writeFile(wb, `experiencia_${candidate.cedula}.xlsx`);
         }
 
         function exportAllCandidates() {
             if (candidates.length === 0) {
-                alert('No hay candidatos para exportar');
+                alert('No hay candidatos');
                 return;
             }
 
-            // Hoja 1: Resumen de todos los candidatos
             const resumenData = [
-                ['REPORTE CONSOLIDADO DE EXPERIENCIA LABORAL'],
-                ['Fecha del Reporte:', new Date().toLocaleString()],
-                ['Total de Candidatos:', candidates.length],
+                ['REPORTE CONSOLIDADO'],
+                ['Fecha:', new Date().toLocaleString()],
+                ['Total:', candidates.length],
                 [],
-                ['No.', 'Apellido', 'Nombre', 'Cédula', 'Experiencia Total', 'Contratos', 'Fecha Evaluación']
+                ['No.', 'Nombre', 'Cédula', 'Exp Total', 'Laboral', 'Docente', 'Validado', 'Fecha']
             ];
 
             candidates.forEach((candidate, idx) => {
                 resumenData.push([
                     idx + 1,
-                    candidate.lastName,
-                    candidate.firstName,
+                    candidate.fullName,
                     candidate.cedula,
                     formatExperience(candidate.totalExperience),
-                    candidate.contracts.length,
+                    (candidate.contracts?.length || 0) + ' contrato(s)',
+                    (candidate.teachingExperience?.length || 0) + ' exp(s)',
+                    candidate.validated ? 'SÍ' : 'NO',
                     candidate.savedAt
                 ]);
             });
 
-            // Hoja 2: Todos los contratos de todos los candidatos
             const allContractsData = [
-                ['Apellido', 'Nombre', 'Cédula', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']
+                ['EXPERIENCIA LABORAL - TODOS'],
+                [],
+                ['Nombre', 'Cédula', 'Ciudad', 'Empresa', 'Cargo', 'Inicio', 'Fin', 'Duración', 'Validado']
             ];
 
             candidates.forEach(candidate => {
-                candidate.contracts.forEach(contract => {
-                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                    allContractsData.push([
-                        candidate.lastName,
-                        candidate.firstName,
-                        candidate.cedula,
-                        contract.city || '',
-                        contract.company,
-                        contract.position,
-                        new Date(contract.startDate).toLocaleDateString(),
-                        new Date(contract.endDate).toLocaleDateString(),
-                        formatExperience(days),
-                        contract.comments || ''
-                    ]);
-                });
-            });
-
-            // Hoja 3: Detalle por candidato
-            const detailData = [['DETALLE POR CANDIDATO'], []];
-
-            candidates.forEach((candidate, idx) => {
-                detailData.push([`CANDIDATO ${idx + 1}: ${candidate.lastName} ${candidate.firstName}`]);
-                detailData.push(['Cédula:', candidate.cedula]);
-                detailData.push(['Experiencia Total:', formatExperience(candidate.totalExperience)]);
-                detailData.push(['Total Contratos:', candidate.contracts.length]);
-                detailData.push([]);
-                
-                detailData.push(['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Comentarios']);
-                candidate.contracts.forEach((contract, cIdx) => {
-                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                    detailData.push([
-                        cIdx + 1,
-                        contract.city || '',
-                        contract.company,
-                        contract.position,
-                        new Date(contract.startDate).toLocaleDateString(),
-                        new Date(contract.endDate).toLocaleDateString(),
-                        formatExperience(days),
-                        contract.comments || ''
-                    ]);
-                });forEach((contract, cIdx) => {
-                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                    detailData.push([
-                        cIdx + 1,
-                        contract.city || '',
-                        contract.company,
-                        contract.position,
-                        new Date(contract.startDate).toLocaleDateString(),
-                        new Date(contract.endDate).toLocaleDateString(),
-                        formatExperience(days)
-                    ]);
-                });
-
-                const overlaps = getOverlaps(candidate.contracts);
-                if (overlaps.length > 0) {
-                    detailData.push([]);
-                    detailData.push(['TRASLAPES DETECTADOS:']);
-                    overlaps.forEach((overlap, oIdx) => {
-                        detailData.push([
-                            `${oIdx + 1}.`,
-                            `${overlap.contract1.company} ↔ ${overlap.contract2.company}`,
-                            `${Math.floor(overlap.days)} días`
+                if (candidate.contracts && candidate.contracts.length > 0) {
+                    candidate.contracts.forEach(contract => {
+                        const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                        allContractsData.push([
+                            candidate.fullName,
+                            candidate.cedula,
+                            contract.city || '',
+                            contract.company,
+                            contract.position,
+                            new Date(contract.startDate).toLocaleDateString(),
+                            new Date(contract.endDate).toLocaleDateString(),
+                            formatExperience(days),
+                            candidate.validated ? 'SÍ' : 'NO'
                         ]);
                     });
                 }
-
-                detailData.push([]);
-                detailData.push([]);
             });
 
-            // Crear el libro de Excel
+            const allTeachingData = [
+                ['EXPERIENCIA DOCENTE - TODOS'],
+                [],
+                ['Nombre', 'Cédula', 'Ciudad', 'Institución', 'Modalidad', 'Programa', 'Dedicación', 'H/Sem', 'Inicio', 'Fin', 'Equiv.', 'Validado']
+            ];
+
+            candidates.forEach(candidate => {
+                if (candidate.teachingExperience && candidate.teachingExperience.length > 0) {
+                    candidate.teachingExperience.forEach(teach => {
+                        const equivDays = calculateTeachingEquivalent(teach);
+                        allTeachingData.push([
+                            candidate.fullName,
+                            candidate.cedula,
+                            teach.city || '',
+                            teach.institution,
+                            teach.modality,
+                            teach.program,
+                            teach.dedication,
+                            teach.hoursPerWeek || '-',
+                            new Date(teach.startDate).toLocaleDateString(),
+                            new Date(teach.endDate).toLocaleDateString(),
+                            formatExperience(equivDays),
+                            candidate.validated ? 'SÍ' : 'NO'
+                        ]);
+                    });
+                }
+            });
+
             const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumenData), 'Resumen');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(allContractsData), 'Todos - Laboral');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(allTeachingData), 'Todos - Docente');
             
-            const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
-            const ws2 = XLSX.utils.aoa_to_sheet(allContractsData);
-            const ws3 = XLSX.utils.aoa_to_sheet(detailData);
-            
-            ws1['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 20 }];
-            ws2['!cols'] = [{ wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
-            ws3['!cols'] = [{ wch: 10 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 40 }];
-            
-            XLSX.utils.book_append_sheet(wb, ws1, 'Resumen General');
-            XLSX.utils.book_append_sheet(wb, ws2, 'Todos los Contratos');
-            XLSX.utils.book_append_sheet(wb, ws3, 'Detalle por Candidato');
-            
-            const fecha = new Date().toISOString().split('T')[0];
-            XLSX.writeFile(wb, `reporte_completo_experiencia_${fecha}.xlsx`);
+            XLSX.writeFile(wb, `reporte_completo_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
     </script>
 </body>

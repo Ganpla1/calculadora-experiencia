@@ -4,260 +4,768 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Experiencia Laboral</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 10px; font-size: 32px; }
+        h2 { color: #555; margin-bottom: 20px; font-size: 24px; }
+        h3 { color: #666; margin-bottom: 15px; font-size: 20px; }
+        .info-box { background: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .info-box p { color: #1565C0; font-size: 14px; margin: 5px 0; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 8px; color: #555; font-size: 14px; }
+        input, textarea { padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: border 0.3s; font-family: inherit; }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; }
+        textarea { resize: vertical; min-height: 120px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); }
+        .btn-secondary { background: #10b981; color: white; }
+        .btn-secondary:hover { background: #059669; }
+        .btn-success { background: #10b981; color: white; width: 100%; justify-content: center; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; padding: 8px 12px; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-warning { background: #f59e0b; color: white; padding: 8px 12px; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-small { padding: 6px 12px; font-size: 14px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
+        .tab { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab:hover { color: #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .contract-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .contract-table th { background: #f3f4f6; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
+        .contract-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+        .contract-table tr:hover { background: #f9fafb; }
+        .contract-table input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .contract-table input[type="date"]:focus { border-color: #667eea; outline: none; }
+        .contract-table input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .contract-table input:focus { border-color: #667eea; }
+        .action-buttons { display: flex; gap: 5px; }
+        .warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .warning-box p { color: #92400e; font-size: 14px; margin: 5px 0; }
+        .result-box { background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6; }
+        .result-box p { font-size: 18px; font-weight: 600; color: #1e40af; }
+        .candidate-card { border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.3s; }
+        .candidate-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .candidate-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .candidate-info h3 { margin-bottom: 5px; }
+        .candidate-info p { color: #666; font-size: 14px; margin: 3px 0; }
+        .experience-badge { background: #dcfce7; border-left: 4px solid #10b981; padding: 15px; margin: 15px 0; border-radius: 8px; }
+        .experience-badge p { color: #065f46; font-size: 18px; font-weight: 700; }
+        details { cursor: pointer; margin-top: 15px; }
+        summary { font-weight: 600; color: #667eea; padding: 10px; background: #f3f4f6; border-radius: 6px; }
+        summary:hover { background: #e5e7eb; }
+        .contract-list { margin-top: 10px; padding-left: 20px; }
+        .contract-list-item { background: #f9fafb; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 3px solid #667eea; }
+        .divider { border: none; border-top: 2px solid #e5e7eb; margin: 30px 0; }
+        .helper-text { font-size: 12px; color: #6b7280; margin-top: 5px; }
+        .error-row { background: #fee2e2 !important; }
+        .success-message { background: #d1fae5; color: #065f46; padding: 12px; border-radius: 6px; margin: 10px 0; }
+    </style>
 </head>
 <body>
-    <div id="root">Cargando...</div>
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <div class="container">
+        <div class="card">
+            <h1>📊 Calculadora de Experiencia Laboral</h1>
+            <div class="info-box">
+                <p><strong>💡 Nuevo:</strong> Ahora puedes pegar datos directamente desde Excel!</p>
+                <p>✅ Copia desde tu tabla → Pega aquí → Valida y edita fechas → Calcula experiencia</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>👤 Nombre del Candidato</label>
+                    <input type="text" id="candidateName" placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>🆔 Cédula de Ciudadanía</label>
+                    <input type="text" id="candidateCedula" placeholder="Ej: 1234567890">
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('paste')">📋 Pegar desde Excel</button>
+                <button class="tab" onclick="switchTab('manual')">➕ Agregar Manual</button>
+            </div>
+
+            <div id="pasteTab" class="tab-content active">
+                <h2>📋 Pegar Datos desde Excel</h2>
+                <div class="form-group">
+                    <label>Pega aquí los datos copiados de Excel</label>
+                    <textarea id="pasteArea" placeholder="Selecciona TODAS las filas de tu tabla de Excel (incluye todas las columnas) y pégalas aquí con Ctrl+V
+
+La aplicación detectará automáticamente:
+- Columna CIUDAD
+- Columna ENTIDAD (empresa)
+- Columna CARGO
+- Columna FECHA INGRESO
+- Columna FECHA RETIRO
+
+Ejemplo:
+VALLE DEL CAUCA    ROLDANILLO    HOSPITAL SAN ANTONIO ESE    CONTRATISTA    2023-02-15    2023-12-31    VER
+BOGOTA D.C.    BOGOTÁ D.C.    FONDO COLOMBIA EN PAZ    ASESOR    2023-06-28    2023-12-28    VER"></textarea>
+                    <p class="helper-text">💡 Tip: Selecciona las filas completas (con todas las columnas) y pega aquí. El sistema ignorará las columnas que no necesita.</p>
+                </div>
+                <button class="btn btn-primary" onclick="processPastedData()">🔄 Procesar Datos</button>
+            </div>
+
+            <div id="manualTab" class="tab-content">
+                <h2>➕ Agregar Contrato Manual</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Ciudad (Opcional)</label>
+                        <input type="text" id="city" placeholder="Ej: Bogotá D.C.">
+                    </div>
+                    <div class="form-group">
+                        <label>Empresa *</label>
+                        <input type="text" id="company" placeholder="Nombre de la empresa">
+                    </div>
+                    <div class="form-group">
+                        <label>Cargo *</label>
+                        <input type="text" id="position" placeholder="Título del cargo">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Inicio *</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Fin *</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addContract()">➕ Agregar Contrato</button>
+            </div>
+
+            <div id="contractsTableContainer"></div>
+            <div id="overlapWarning"></div>
+            <div id="totalExperience"></div>
+            <div id="saveButton"></div>
+        </div>
+
+        <div class="card" id="candidatesList" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">📋 Candidatos Evaluados (<span id="candidatesCount">0</span>)</h2>
+                <button class="btn btn-secondary" onclick="exportAllCandidates()">📊 Descargar Reporte Completo (Todos)</button>
+            </div>
+            <div id="candidatesContainer"></div>
+        </div>
+    </div>
+
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-    
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <script>
+        let currentCandidate = {
+            name: '',
+            cedula: '',
+            contracts: []
+        };
+        let candidates = [];
 
-        // Componentes de íconos simples como SVG
-        const CalendarIcon = () => (
-            <svg className="inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-        );
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'paste') {
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+                document.getElementById('pasteTab').classList.add('active');
+            } else {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('manualTab').classList.add('active');
+            }
+        }
 
-        const TrashIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-        );
+        function processPastedData() {
+            const pasteArea = document.getElementById('pasteArea');
+            const text = pasteArea.value.trim();
 
-        const PlusIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        );
+            if (!text) {
+                alert('Por favor pega los datos de Excel en el área de texto');
+                return;
+            }
 
-        const UserIcon = () => (
-            <svg className="inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        );
+            const lines = text.split('\n');
+            let processed = 0;
+            let errors = 0;
 
-        const FileTextIcon = ({ size = 32 }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-        );
+            lines.forEach((line, index) => {
+                if (!line.trim()) return; // Ignorar líneas vacías
+                
+                const parts = line.split('\t');
+                
+                // Si tiene 7+ columnas, es la tabla completa (Departamento, Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro, Documentos)
+                // Tomamos: columna 1 (Ciudad), columna 2 (Entidad), columna 3 (Cargo), columna 4 (Fecha Ingreso), columna 5 (Fecha Retiro)
+                let city, company, position, startDate, endDate;
+                
+                if (parts.length >= 7) {
+                    // Formato con todas las columnas (Departamento, Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro, Docs)
+                    city = parts[1].trim(); // Ciudad
+                    company = parts[2].trim(); // Entidad
+                    position = parts[3].trim(); // Cargo
+                    startDate = parseDate(parts[4].trim()); // Fecha Ingreso
+                    endDate = parseDate(parts[5].trim()); // Fecha Retiro
+                } else if (parts.length >= 5) {
+                    // Formato con Ciudad, Entidad, Cargo, FechaIngreso, FechaRetiro
+                    city = parts[0].trim();
+                    company = parts[1].trim();
+                    position = parts[2].trim();
+                    startDate = parseDate(parts[3].trim());
+                    endDate = parseDate(parts[4].trim());
+                } else if (parts.length >= 4) {
+                    // Formato simplificado sin ciudad (Entidad, Cargo, FechaIngreso, FechaRetiro)
+                    city = '';
+                    company = parts[0].trim();
+                    position = parts[1].trim();
+                    startDate = parseDate(parts[2].trim());
+                    endDate = parseDate(parts[3].trim());
+                } else {
+                    errors++;
+                    return;
+                }
 
-        const AlertCircleIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-        );
-
-        const FileSpreadsheetIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="8" y1="13" x2="16" y2="13"></line>
-                <line x1="8" y1="17" x2="16" y2="17"></line>
-                <line x1="12" y1="9" x2="12" y2="21"></line>
-            </svg>
-        );
-
-        function ExperienceCalculator() {
-            const [candidates, setCandidates] = useState([]);
-            const [currentCandidate, setCurrentCandidate] = useState({
-                name: '',
-                cedula: '',
-                contracts: []
+                if (company && position && startDate && endDate && company !== 'ENTIDAD' && position !== 'CARGO' && city !== 'CIUDAD') {
+                    // Validar que las fechas sean correctas
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    
+                    if (start < end) {
+                        currentCandidate.contracts.push({
+                            id: Date.now() + index + Math.random(),
+                            city: city,
+                            company: company,
+                            position: position,
+                            startDate: startDate,
+                            endDate: endDate
+                        });
+                        processed++;
+                    } else {
+                        errors++;
+                    }
+                } else if (company && company !== 'ENTIDAD') {
+                    errors++;
+                }
             });
-            const [newContract, setNewContract] = useState({
-                company: '',
-                position: '',
-                startDate: '',
-                endDate: ''
-            });
 
-            const calculateDaysOverlap = (start1, end1, start2, end2) => {
-                const overlapStart = Math.max(start1, start2);
-                const overlapEnd = Math.min(end1, end2);
-                return overlapStart < overlapEnd ? overlapEnd - overlapStart : 0;
+            pasteArea.value = '';
+
+            if (processed > 0) {
+                renderContractsTable();
+                checkOverlaps();
+                calculateTotal();
+                
+                const message = document.createElement('div');
+                message.className = 'success-message';
+                message.textContent = `✅ Se procesaron ${processed} contrato(s). ${errors > 0 ? `⚠️ ${errors} fila(s) con errores o encabezados fueron omitidas.` : ''}`;
+                document.getElementById('pasteTab').appendChild(message);
+                setTimeout(() => message.remove(), 5000);
+            } else {
+                alert('No se pudo procesar ningún dato. Asegúrate de copiar las filas con: Ciudad, Entidad, Cargo y Fechas.\n\nSi copiaste toda la tabla con encabezados, intenta copiar solo las filas de datos (sin el encabezado).');
+            }
+        }
+
+        function parseDate(dateStr) {
+            // Intenta varios formatos de fecha
+            if (!dateStr) return null;
+            
+            // Formato YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                return dateStr;
+            }
+            
+            // Formato DD/MM/YYYY
+            const match1 = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (match1) {
+                const [_, day, month, year] = match1;
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+            
+            // Formato DD-MM-YYYY
+            const match2 = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+            if (match2) {
+                const [_, day, month, year] = match2;
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+
+            // Intenta crear fecha directamente
+            const date = new Date(dateStr);
+            if (!isNaN(date.getTime())) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            return null;
+        }
+
+        function addContract() {
+            const city = document.getElementById('city').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const position = document.getElementById('position').value.trim();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            if (!company || !position || !startDate || !endDate) {
+                alert('Por favor completa todos los campos obligatorios del contrato');
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('La fecha de fin debe ser posterior a la fecha de inicio');
+                return;
+            }
+
+            const contract = {
+                id: Date.now(),
+                city: city,
+                company: company,
+                position: position,
+                startDate: startDate,
+                endDate: endDate
             };
 
-            const calculateTotalExperience = (contracts) => {
-                if (contracts.length === 0) return 0;
+            currentCandidate.contracts.push(contract);
 
-                const sortedContracts = [...contracts]
-                    .map(c => ({
-                        ...c,
-                        start: new Date(c.startDate).getTime(),
-                        end: new Date(c.endDate).getTime()
-                    }))
-                    .sort((a, b) => a.start - b.start);
+            document.getElementById('city').value = '';
+            document.getElementById('company').value = '';
+            document.getElementById('position').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
 
-                let totalDays = 0;
-                const mergedPeriods = [];
+            renderContractsTable();
+            checkOverlaps();
+            calculateTotal();
+        }
 
-                for (const contract of sortedContracts) {
-                    if (mergedPeriods.length === 0) {
+        function updateContract(id, field, value) {
+            const contract = currentCandidate.contracts.find(c => c.id === id);
+            if (contract) {
+                contract[field] = value;
+                checkOverlaps();
+                calculateTotal();
+            }
+        }
+
+        function deleteContract(id) {
+            if (confirm('¿Eliminar este contrato?')) {
+                currentCandidate.contracts = currentCandidate.contracts.filter(c => c.id !== id);
+                renderContractsTable();
+                checkOverlaps();
+                calculateTotal();
+            }
+        }
+
+        function duplicateContract(id) {
+            const index = currentCandidate.contracts.findIndex(c => c.id === id);
+            if (index !== -1) {
+                const contract = currentCandidate.contracts[index];
+                const newContract = {
+                    ...contract,
+                    id: Date.now()
+                };
+                // Insertar justo después del contrato original
+                currentCandidate.contracts.splice(index + 1, 0, newContract);
+                renderContractsTable();
+                checkOverlaps();
+                calculateTotal();
+            }
+        }
+
+        function renderContractsTable() {
+            const container = document.getElementById('contractsTableContainer');
+            
+            if (currentCandidate.contracts.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<hr class="divider"><h3>📝 Contratos Registrados (' + currentCandidate.contracts.length + ')</h3>';
+            html += '<p class="helper-text">💡 Puedes editar directamente en la tabla, duplicar contratos para dividirlos, o eliminarlos</p>';
+            html += '<table class="contract-table"><thead><tr>';
+            html += '<th style="width: 4%">#</th>';
+            html += '<th style="width: 12%">Ciudad</th>';
+            html += '<th style="width: 22%">Empresa</th>';
+            html += '<th style="width: 18%">Cargo</th>';
+            html += '<th style="width: 12%">Fecha Inicio</th>';
+            html += '<th style="width: 12%">Fecha Fin</th>';
+            html += '<th style="width: 10%">Duración</th>';
+            html += '<th style="width: 10%">Acciones</th>';
+            html += '</tr></thead><tbody>';
+
+            currentCandidate.contracts.forEach((contract, index) => {
+                const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                const isError = days <= 0;
+                
+                html += `<tr class="${isError ? 'error-row' : ''}">`;
+                html += `<td>${index + 1}</td>`;
+                html += `<td><input type="text" value="${contract.city || ''}" onchange="updateContract(${contract.id}, 'city', this.value)" placeholder="Ciudad"></td>`;
+                html += `<td><input type="text" value="${contract.company}" onchange="updateContract(${contract.id}, 'company', this.value)"></td>`;
+                html += `<td><input type="text" value="${contract.position}" onchange="updateContract(${contract.id}, 'position', this.value)"></td>`;
+                html += `<td><input type="date" value="${contract.startDate}" onblur="updateContract(${contract.id}, 'startDate', this.value); renderContractsTable()"></td>`;
+                html += `<td><input type="date" value="${contract.endDate}" onblur="updateContract(${contract.id}, 'endDate', this.value); renderContractsTable()"></td>`;
+                html += `<td>${isError ? '❌ Error' : formatExperience(days)}</td>`;
+                html += `<td><div class="action-buttons">`;
+                html += `<button class="btn btn-warning btn-small" onclick="duplicateContract(${contract.id})" title="Duplicar para dividir">📋</button>`;
+                html += `<button class="btn btn-danger btn-small" onclick="deleteContract(${contract.id})" title="Eliminar">🗑️</button>`;
+                html += `</div></td>`;
+                html += `</tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function checkOverlaps() {
+            const overlaps = getOverlaps(currentCandidate.contracts);
+            const container = document.getElementById('overlapWarning');
+
+            if (overlaps.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="warning-box"><p><strong>⚠️ Traslapes Detectados:</strong></p>';
+            overlaps.forEach(overlap => {
+                html += `<p>• ${overlap.contract1.company} y ${overlap.contract2.company}: ${Math.floor(overlap.days)} días traslapados</p>`;
+            });
+            html += '<p><strong>Estos períodos se contarán una sola vez en el cálculo total.</strong></p></div>';
+
+            container.innerHTML = html;
+        }
+
+        function getOverlaps(contracts) {
+            const overlaps = [];
+            const sorted = [...contracts].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+            for (let i = 0; i < sorted.length; i++) {
+                for (let j = i + 1; j < sorted.length; j++) {
+                    const start1 = new Date(sorted[i].startDate).getTime();
+                    const end1 = new Date(sorted[i].endDate).getTime();
+                    const start2 = new Date(sorted[j].startDate).getTime();
+                    const end2 = new Date(sorted[j].endDate).getTime();
+
+                    const overlapStart = Math.max(start1, start2);
+                    const overlapEnd = Math.min(end1, end2);
+                    const overlapDays = overlapStart < overlapEnd ? (overlapEnd - overlapStart) / (1000 * 60 * 60 * 24) : 0;
+
+                    if (overlapDays > 0) {
+                        overlaps.push({
+                            contract1: sorted[i],
+                            contract2: sorted[j],
+                            days: overlapDays
+                        });
+                    }
+                }
+            }
+
+            return overlaps;
+        }
+
+        function calculateTotalExperience(contracts) {
+            if (contracts.length === 0) return 0;
+
+            const sorted = [...contracts]
+                .map(c => ({
+                    ...c,
+                    start: new Date(c.startDate).getTime(),
+                    end: new Date(c.endDate).getTime()
+                }))
+                .sort((a, b) => a.start - b.start);
+
+            let totalDays = 0;
+            const mergedPeriods = [];
+
+            for (const contract of sorted) {
+                if (mergedPeriods.length === 0) {
+                    mergedPeriods.push({ start: contract.start, end: contract.end });
+                    totalDays += (contract.end - contract.start) / (1000 * 60 * 60 * 24);
+                } else {
+                    const lastPeriod = mergedPeriods[mergedPeriods.length - 1];
+                    
+                    if (contract.start <= lastPeriod.end) {
+                        const overlapStart = Math.max(lastPeriod.start, contract.start);
+                        const overlapEnd = Math.min(lastPeriod.end, contract.end);
+                        const overlap = overlapStart < overlapEnd ? (overlapEnd - overlapStart) / (1000 * 60 * 60 * 24) : 0;
+                        totalDays += ((contract.end - contract.start) / (1000 * 60 * 60 * 24)) - overlap;
+                        lastPeriod.end = Math.max(lastPeriod.end, contract.end);
+                    } else {
                         mergedPeriods.push({ start: contract.start, end: contract.end });
                         totalDays += (contract.end - contract.start) / (1000 * 60 * 60 * 24);
-                    } else {
-                        const lastPeriod = mergedPeriods[mergedPeriods.length - 1];
-                        
-                        if (contract.start <= lastPeriod.end) {
-                            const overlap = calculateDaysOverlap(lastPeriod.start, lastPeriod.end, contract.start, contract.end);
-                            totalDays += ((contract.end - contract.start) / (1000 * 60 * 60 * 24)) - overlap;
-                            lastPeriod.end = Math.max(lastPeriod.end, contract.end);
-                        } else {
-                            mergedPeriods.push({ start: contract.start, end: contract.end });
-                            totalDays += (contract.end - contract.start) / (1000 * 60 * 60 * 24);
-                        }
                     }
                 }
+            }
 
-                return totalDays;
-            };
+            return totalDays;
+        }
 
-            const formatExperience = (days) => {
-                const years = Math.floor(days / 365);
-                const months = Math.floor((days % 365) / 30);
-                const remainingDays = Math.floor(days % 30);
-                
-                const parts = [];
-                if (years > 0) parts.push(`${years} año${years > 1 ? 's' : ''}`);
-                if (months > 0) parts.push(`${months} mes${months > 1 ? 'es' : ''}`);
-                if (remainingDays > 0) parts.push(`${remainingDays} día${remainingDays > 1 ? 's' : ''}`);
-                
-                return parts.join(', ') || '0 días';
-            };
+        function formatExperience(days) {
+            const years = Math.floor(days / 365);
+            const months = Math.floor((days % 365) / 30);
+            const remainingDays = Math.floor(days % 30);
+            
+            const parts = [];
+            if (years > 0) parts.push(years + (years > 1 ? ' años' : ' año'));
+            if (months > 0) parts.push(months + (months > 1 ? ' meses' : ' mes'));
+            if (remainingDays > 0) parts.push(remainingDays + (remainingDays > 1 ? ' días' : ' día'));
+            
+            return parts.join(', ') || '0 días';
+        }
 
-            const addContract = () => {
-                if (!newContract.company || !newContract.position || !newContract.startDate || !newContract.endDate) {
-                    alert('Por favor completa todos los campos del contrato');
-                    return;
-                }
+        function calculateTotal() {
+            const container = document.getElementById('totalExperience');
+            const saveBtn = document.getElementById('saveButton');
 
-                if (new Date(newContract.startDate) >= new Date(newContract.endDate)) {
-                    alert('La fecha de fin debe ser posterior a la fecha de inicio');
-                    return;
-                }
+            if (currentCandidate.contracts.length === 0) {
+                container.innerHTML = '';
+                saveBtn.innerHTML = '';
+                return;
+            }
 
-                setCurrentCandidate({
-                    ...currentCandidate,
-                    contracts: [...currentCandidate.contracts, { ...newContract, id: Date.now() }]
-                });
+            const totalDays = calculateTotalExperience(currentCandidate.contracts);
+            container.innerHTML = `
+                <div class="result-box">
+                    <p>✅ Experiencia Total (sin traslapes): ${formatExperience(totalDays)}</p>
+                </div>
+            `;
 
-                setNewContract({
-                    company: '',
-                    position: '',
-                    startDate: '',
-                    endDate: ''
-                });
-            };
+            saveBtn.innerHTML = '<button class="btn btn-success" onclick="saveCandidate()">💾 Guardar Candidato</button>';
+        }
 
-            const removeContract = (id) => {
-                setCurrentCandidate({
-                    ...currentCandidate,
-                    contracts: currentCandidate.contracts.filter(c => c.id !== id)
-                });
-            };
+        function saveCandidate() {
+            const name = document.getElementById('candidateName').value.trim();
+            const cedula = document.getElementById('candidateCedula').value.trim();
 
-            const saveCandidate = () => {
-                if (!currentCandidate.name.trim()) {
-                    alert('Por favor ingresa el nombre del candidato');
-                    return;
-                }
+            if (!name) {
+                alert('Por favor ingresa el nombre del candidato');
+                return;
+            }
 
-                if (!currentCandidate.cedula.trim()) {
-                    alert('Por favor ingresa la cédula del candidato');
-                    return;
-                }
+            if (!cedula) {
+                alert('Por favor ingresa la cédula del candidato');
+                return;
+            }
 
-                if (currentCandidate.contracts.length === 0) {
-                    alert('Por favor agrega al menos un contrato');
-                    return;
-                }
+            if (currentCandidate.contracts.length === 0) {
+                alert('Por favor agrega al menos un contrato');
+                return;
+            }
 
-                const totalDays = calculateTotalExperience(currentCandidate.contracts);
-                
-                setCandidates([...candidates, {
-                    ...currentCandidate,
-                    totalExperience: totalDays,
-                    savedAt: new Date().toLocaleString()
-                }]);
+            const totalDays = calculateTotalExperience(currentCandidate.contracts);
+            
+            candidates.push({
+                name: name,
+                cedula: cedula,
+                contracts: [...currentCandidate.contracts],
+                totalExperience: totalDays,
+                savedAt: new Date().toLocaleString()
+            });
 
-                setCurrentCandidate({ name: '', cedula: '', contracts: [] });
-            };
+            document.getElementById('candidateName').value = '';
+            document.getElementById('candidateCedula').value = '';
+            currentCandidate = { name: '', cedula: '', contracts: [] };
+            
+            renderContractsTable();
+            checkOverlaps();
+            calculateTotal();
+            renderCandidates();
 
-            const deleteCandidate = (index) => {
-                setCandidates(candidates.filter((_, i) => i !== index));
-            };
+            alert('✅ Candidato guardado exitosamente!');
+        }
 
-            const getOverlaps = (contracts) => {
-                const overlaps = [];
-                const sortedContracts = [...contracts].sort((a, b) => 
-                    new Date(a.startDate) - new Date(b.startDate)
-                );
+        function renderCandidates() {
+            const list = document.getElementById('candidatesList');
+            const container = document.getElementById('candidatesContainer');
+            const count = document.getElementById('candidatesCount');
 
-                for (let i = 0; i < sortedContracts.length; i++) {
-                    for (let j = i + 1; j < sortedContracts.length; j++) {
-                        const start1 = new Date(sortedContracts[i].startDate).getTime();
-                        const end1 = new Date(sortedContracts[i].endDate).getTime();
-                        const start2 = new Date(sortedContracts[j].startDate).getTime();
-                        const end2 = new Date(sortedContracts[j].endDate).getTime();
+            if (candidates.length === 0) {
+                list.style.display = 'none';
+                return;
+            }
 
-                        const overlapDays = calculateDaysOverlap(start1, end1, start2, end2);
+            list.style.display = 'block';
+            count.textContent = candidates.length;
+
+            let html = '';
+            candidates.forEach((candidate, index) => {
+                html += `
+                    <div class="candidate-card">
+                        <div class="candidate-header">
+                            <div class="candidate-info">
+                                <h3>${candidate.name}</h3>
+                                <p>CC: ${candidate.cedula}</p>
+                                <p>Guardado el ${candidate.savedAt}</p>
+                            </div>
+                            <button class="btn btn-danger" onclick="deleteCandidate(${index})">🗑️ Eliminar</button>
+                        </div>
                         
-                        if (overlapDays > 0) {
-                            overlaps.push({
-                                contract1: sortedContracts[i],
-                                contract2: sortedContracts[j],
-                                days: overlapDays
-                            });
-                        }
-                    }
-                }
+                        <div class="experience-badge">
+                            <p>✅ Experiencia Total: ${formatExperience(candidate.totalExperience)}</p>
+                        </div>
 
-                return overlaps;
-            };
+                        <button class="btn btn-success" onclick="exportToExcel(${index})">📥 Descargar Reporte en Excel</button>
 
-            const exportCandidate = (candidate) => {
-                const overlaps = getOverlaps(candidate.contracts);
-                
-                const resumenData = [
-                    ['REPORTE DE EXPERIENCIA LABORAL'],
-                    [],
-                    ['Candidato:', candidate.name],
-                    ['Cédula:', candidate.cedula],
-                    ['Fecha de Evaluación:', candidate.savedAt],
-                    [],
-                    ['EXPERIENCIA TOTAL (SIN TRASLAPES):', formatExperience(candidate.totalExperience)],
-                    [],
-                    ['Total de Contratos:', candidate.contracts.length],
-                    ['Traslapes Detectados:', overlaps.length]
-                ];
+                        <details>
+                            <summary>Ver ${candidate.contracts.length} contrato(s) registrado(s)</summary>
+                            <div class="contract-list">
+                                ${candidate.contracts.map(c => `
+                                    <div class="contract-list-item">
+                                        <strong>${c.city ? c.city + ' - ' : ''}${c.company} - ${c.position}</strong><br>
+                                        📅 ${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </details>
+                    </div>
+                `;
+            });
 
-                const contractsData = [
-                    ['No.', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']
-                ];
-                
-                candidate.contracts.forEach((contract, idx) => {
-                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
-                    contractsData.push([
+            container.innerHTML = html;
+        }
+
+        function deleteCandidate(index) {
+            if (confirm('¿Estás seguro de eliminar este candidato?')) {
+                candidates.splice(index, 1);
+                renderCandidates();
+            }
+        }
+
+        function exportToExcel(index) {
+            const candidate = candidates[index];
+            const overlaps = getOverlaps(candidate.contracts);
+
+            const resumenData = [
+                ['REPORTE DE EXPERIENCIA LABORAL'],
+                [],
+                ['Candidato:', candidate.name],
+                ['Cédula:', candidate.cedula],
+                ['Fecha de Evaluación:', candidate.savedAt],
+                [],
+                ['EXPERIENCIA TOTAL (SIN TRASLAPES):', formatExperience(candidate.totalExperience)],
+                [],
+                ['Total de Contratos:', candidate.contracts.length],
+                ['Traslapes Detectados:', overlaps.length]
+            ];
+
+            const contractsData = [
+                ['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']
+            ];
+            
+            candidate.contracts.forEach((contract, idx) => {
+                const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                contractsData.push([
+                    idx + 1,
+                    contract.city || '',
+                    contract.company,
+                    contract.position,
+                    new Date(contract.startDate).toLocaleDateString(),
+                    new Date(contract.endDate).toLocaleDateString(),
+                    formatExperience(days)
+                ]);
+            });
+
+            const overlapsData = [
+                ['No.', 'Contrato 1', 'Contrato 2', 'Días Traslapados']
+            ];
+            
+            if (overlaps.length > 0) {
+                overlaps.forEach((overlap, idx) => {
+                    overlapsData.push([
                         idx + 1,
+                        overlap.contract1.company + ' (' + overlap.contract1.position + ')',
+                        overlap.contract2.company + ' (' + overlap.contract2.position + ')',
+                        Math.floor(overlap.days) + ' días'
+                    ]);
+                });
+            } else {
+                overlapsData.push(['No se detectaron traslapes entre contratos']);
+            }
+
+            const wb = XLSX.utils.book_new();
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+            const ws2 = XLSX.utils.aoa_to_sheet(contractsData);
+            const ws3 = XLSX.utils.aoa_to_sheet(overlapsData);
+            
+            ws1['!cols'] = [{ wch: 30 }, { wch: 40 }];
+            ws2['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+            ws3['!cols'] = [{ wch: 5 }, { wch: 35 }, { wch: 35 }, { wch: 20 }];
+            
+            XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+            XLSX.utils.book_append_sheet(wb, ws2, 'Contratos');
+            XLSX.utils.book_append_sheet(wb, ws3, 'Traslapes');
+            
+            XLSX.writeFile(wb, 'experiencia_' + candidate.cedula + '_' + candidate.name.replace(/\s+/g, '_') + '.xlsx');
+        }
+
+        function exportAllCandidates() {
+            if (candidates.length === 0) {
+                alert('No hay candidatos para exportar');
+                return;
+            }
+
+            // Hoja 1: Resumen de todos los candidatos
+            const resumenData = [
+                ['REPORTE CONSOLIDADO DE EXPERIENCIA LABORAL'],
+                ['Fecha del Reporte:', new Date().toLocaleString()],
+                ['Total de Candidatos:', candidates.length],
+                [],
+                ['No.', 'Nombre', 'Cédula', 'Experiencia Total', 'Contratos', 'Fecha Evaluación']
+            ];
+
+            candidates.forEach((candidate, idx) => {
+                resumenData.push([
+                    idx + 1,
+                    candidate.name,
+                    candidate.cedula,
+                    formatExperience(candidate.totalExperience),
+                    candidate.contracts.length,
+                    candidate.savedAt
+                ]);
+            });
+
+            // Hoja 2: Todos los contratos de todos los candidatos
+            const allContractsData = [
+                ['Candidato', 'Cédula', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']
+            ];
+
+            candidates.forEach(candidate => {
+                candidate.contracts.forEach(contract => {
+                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                    allContractsData.push([
+                        candidate.name,
+                        candidate.cedula,
+                        contract.city || '',
+                        contract.company,
+                        contract.position,
+                        new Date(contract.startDate).toLocaleDateString(),
+                        new Date(contract.endDate).toLocaleDateString(),
+                        formatExperience(days)
+                    ]);
+                });
+            });
+
+            // Hoja 3: Detalle por candidato
+            const detailData = [['DETALLE POR CANDIDATO'], []];
+
+            candidates.forEach((candidate, idx) => {
+                detailData.push([`CANDIDATO ${idx + 1}: ${candidate.name}`]);
+                detailData.push(['Cédula:', candidate.cedula]);
+                detailData.push(['Experiencia Total:', formatExperience(candidate.totalExperience)]);
+                detailData.push(['Total Contratos:', candidate.contracts.length]);
+                detailData.push([]);
+                
+                detailData.push(['No.', 'Ciudad', 'Empresa', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Duración']);
+                candidate.contracts.forEach((contract, cIdx) => {
+                    const days = Math.floor((new Date(contract.endDate) - new Date(contract.startDate)) / (1000 * 60 * 60 * 24));
+                    detailData.push([
+                        cIdx + 1,
+                        contract.city || '',
                         contract.company,
                         contract.position,
                         new Date(contract.startDate).toLocaleDateString(),
@@ -266,265 +774,41 @@
                     ]);
                 });
 
-                const overlapsData = [
-                    ['No.', 'Contrato 1', 'Contrato 2', 'Días Traslapados']
-                ];
-                
+                const overlaps = getOverlaps(candidate.contracts);
                 if (overlaps.length > 0) {
-                    overlaps.forEach((overlap, idx) => {
-                        overlapsData.push([
-                            idx + 1,
-                            `${overlap.contract1.company} (${overlap.contract1.position})`,
-                            `${overlap.contract2.company} (${overlap.contract2.position})`,
+                    detailData.push([]);
+                    detailData.push(['TRASLAPES DETECTADOS:']);
+                    overlaps.forEach((overlap, oIdx) => {
+                        detailData.push([
+                            `${oIdx + 1}.`,
+                            `${overlap.contract1.company} ↔ ${overlap.contract2.company}`,
                             `${Math.floor(overlap.days)} días`
                         ]);
                     });
-                } else {
-                    overlapsData.push(['No se detectaron traslapes entre contratos']);
                 }
 
-                const wb = XLSX.utils.book_new();
-                
-                const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
-                const ws2 = XLSX.utils.aoa_to_sheet(contractsData);
-                const ws3 = XLSX.utils.aoa_to_sheet(overlapsData);
-                
-                ws1['!cols'] = [{ wch: 30 }, { wch: 40 }];
-                ws2['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
-                ws3['!cols'] = [{ wch: 5 }, { wch: 35 }, { wch: 35 }, { wch: 20 }];
-                
-                XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
-                XLSX.utils.book_append_sheet(wb, ws2, 'Contratos');
-                XLSX.utils.book_append_sheet(wb, ws3, 'Traslapes');
-                
-                XLSX.writeFile(wb, `experiencia_${candidate.cedula}_${candidate.name.replace(/\s+/g, '_')}.xlsx`);
-            };
+                detailData.push([]);
+                detailData.push([]);
+            });
 
-            return (
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="text-indigo-600"><FileTextIcon /></div>
-                                <h1 className="text-3xl font-bold text-gray-800">
-                                    Calculadora de Experiencia Laboral
-                                </h1>
-                            </div>
-
-                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-                                <div className="flex items-start gap-2">
-                                    <div className="text-blue-600 mt-1"><AlertCircleIcon /></div>
-                                    <p className="text-sm text-blue-800">
-                                        Esta herramienta calcula automáticamente el tiempo real de experiencia, 
-                                        eliminando períodos traslapados para evitar contar doble el mismo tiempo.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                            <UserIcon /> Nombre del Candidato
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={currentCandidate.name}
-                                            onChange={(e) => setCurrentCandidate({ ...currentCandidate, name: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            placeholder="Ej: Juan Pérez"
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                            <FileTextIcon size={16} /> Cédula de Ciudadanía
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={currentCandidate.cedula}
-                                            onChange={(e) => setCurrentCandidate({ ...currentCandidate, cedula: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            placeholder="Ej: 1234567890"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="border-t pt-6">
-                                    <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                                        Agregar Contrato
-                                    </h2>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input
-                                            type="text"
-                                            value={newContract.company}
-                                            onChange={(e) => setNewContract({ ...newContract, company: e.target.value })}
-                                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            placeholder="Empresa"
-                                        />
-                                        <input
-                                            type="text"
-                                            value={newContract.position}
-                                            onChange={(e) => setNewContract({ ...newContract, position: e.target.value })}
-                                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            placeholder="Cargo"
-                                        />
-                                        <div>
-                                            <label className="block text-sm text-gray-600 mb-1">Fecha de Inicio</label>
-                                            <input
-                                                type="date"
-                                                value={newContract.startDate}
-                                                onChange={(e) => setNewContract({ ...newContract, startDate: e.target.value })}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm text-gray-600 mb-1">Fecha de Fin</label>
-                                            <input
-                                                type="date"
-                                                value={newContract.endDate}
-                                                onChange={(e) => setNewContract({ ...newContract, endDate: e.target.value })}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        onClick={addContract}
-                                        className="mt-4 flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                                    >
-                                        <PlusIcon />
-                                        Agregar Contrato
-                                    </button>
-                                </div>
-
-                                {currentCandidate.contracts.length > 0 && (
-                                    <div className="border-t pt-6">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                                            Contratos Registrados ({currentCandidate.contracts.length})
-                                        </h3>
-                                        
-                                        <div className="space-y-3">
-                                            {currentCandidate.contracts.map((contract) => (
-                                                <div key={contract.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                                                    <div className="flex-1">
-                                                        <p className="font-semibold text-gray-800">{contract.company}</p>
-                                                        <p className="text-sm text-gray-600">{contract.position}</p>
-                                                        <p className="text-sm text-gray-500 mt-1">
-                                                            <CalendarIcon />
-                                                            {' '}{new Date(contract.startDate).toLocaleDateString()} - {new Date(contract.endDate).toLocaleDateString()}
-                                                        </p>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => removeContract(contract.id)}
-                                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    >
-                                                        <TrashIcon />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {getOverlaps(currentCandidate.contracts).length > 0 && (
-                                            <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-500 p-4">
-                                                <p className="font-semibold text-yellow-800 mb-2">⚠️ Traslapes Detectados:</p>
-                                                {getOverlaps(currentCandidate.contracts).map((overlap, idx) => (
-                                                    <p key={idx} className="text-sm text-yellow-700 mb-1">
-                                                        • {overlap.contract1.company} y {overlap.contract2.company}: {Math.floor(overlap.days)} días traslapados
-                                                    </p>
-                                                ))}
-                                                <p className="text-sm text-yellow-700 mt-2 font-semibold">
-                                                    Estos períodos se contarán una sola vez en el cálculo total.
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        <div className="mt-6 p-4 bg-indigo-50 rounded-lg">
-                                            <p className="text-lg font-semibold text-indigo-900">
-                                                Experiencia Total (sin traslapes): {formatExperience(calculateTotalExperience(currentCandidate.contracts))}
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            onClick={saveCandidate}
-                                            className="mt-4 w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                                        >
-                                            Guardar Candidato
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {candidates.length > 0 && (
-                            <div className="bg-white rounded-lg shadow-lg p-6">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                                    Candidatos Evaluados ({candidates.length})
-                                </h2>
-                                
-                                <div className="space-y-4">
-                                    {candidates.map((candidate, index) => (
-                                        <div key={index} className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className="flex-1">
-                                                    <h3 className="text-xl font-bold text-gray-800">{candidate.name}</h3>
-                                                    <p className="text-sm text-gray-600">CC: {candidate.cedula}</p>
-                                                    <p className="text-sm text-gray-500">Guardado el {candidate.savedAt}</p>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => deleteCandidate(index)}
-                                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                        title="Eliminar candidato"
-                                                    >
-                                                        <TrashIcon />
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-                                                <p className="text-lg font-bold text-green-900">
-                                                    ✓ Experiencia Total: {formatExperience(candidate.totalExperience)}
-                                                </p>
-                                            </div>
-
-                                            <button
-                                                onClick={() => exportCandidate(candidate)}
-                                                className="w-full mb-4 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                                            >
-                                                <FileSpreadsheetIcon />
-                                                Descargar Reporte en Excel
-                                            </button>
-
-                                            <details className="cursor-pointer">
-                                                <summary className="font-semibold text-gray-700 hover:text-indigo-600">
-                                                    Ver {candidate.contracts.length} contrato(s) registrado(s)
-                                                </summary>
-                                                <div className="mt-3 space-y-2 pl-4">
-                                                    {candidate.contracts.map((contract, idx) => (
-                                                        <div key={idx} className="text-sm bg-gray-50 p-3 rounded">
-                                                            <p className="font-semibold">{contract.company} - {contract.position}</p>
-                                                            <p className="text-gray-600">
-                                                                {new Date(contract.startDate).toLocaleDateString()} - {new Date(contract.endDate).toLocaleDateString()}
-                                                            </p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </details>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
+            // Crear el libro de Excel
+            const wb = XLSX.utils.book_new();
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+            const ws2 = XLSX.utils.aoa_to_sheet(allContractsData);
+            const ws3 = XLSX.utils.aoa_to_sheet(detailData);
+            
+            ws1['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 20 }];
+            ws2['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
+            ws3['!cols'] = [{ wch: 10 }, { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
+            
+            XLSX.utils.book_append_sheet(wb, ws1, 'Resumen General');
+            XLSX.utils.book_append_sheet(wb, ws2, 'Todos los Contratos');
+            XLSX.utils.book_append_sheet(wb, ws3, 'Detalle por Candidato');
+            
+            const fecha = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `reporte_completo_experiencia_${fecha}.xlsx`);
         }
-
-        // Inicializar la aplicación
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<ExperienceCalculator />);
     </script>
 </body>
 </html>
